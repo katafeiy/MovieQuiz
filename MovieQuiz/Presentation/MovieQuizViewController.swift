@@ -2,10 +2,29 @@ import UIKit
 
 final class MovieQuizViewController: UIViewController {
     // MARK: - Lifecycle
+    
+    @IBOutlet weak var buttonYes: UIButton!
+    @IBOutlet weak var buttonNo: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        buttonYes.layer.cornerRadius = 15
+        buttonNo.layer.cornerRadius = 15
+            
     }
+    
+    @IBAction func buttonYes(_ sender: Any) {
+    }
+    
+    @IBAction func buttonNo(_ sender: Any) {
+    }
+    
 }
+
+
+
+
 
 /*
  Mock-данные
