@@ -65,7 +65,7 @@
                                                     <color key="titleColor" name="YP Black"/>
                                                 </state>
                                                 <connections>
-                                                    <action selector="buttonNo:" destination="BYZ-38-t0r" eventType="touchUpInside" id="r6R-M2-pBi"/>
+                                                    <action selector="pressButtonNo:" destination="BYZ-38-t0r" eventType="touchUpInside" id="gy0-c7-obh"/>
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9ul-25-Iw5" userLabel="Yes button">
@@ -77,7 +77,7 @@
                                                     <color key="titleColor" name="YP Black"/>
                                                 </state>
                                                 <connections>
-                                                    <action selector="buttonYes:" destination="BYZ-38-t0r" eventType="touchUpInside" id="T4h-Vg-qqV"/>
+                                                    <action selector="pressButtonYes:" destination="BYZ-38-t0r" eventType="touchUpInside" id="z3K-mu-Yed"/>
                                                 </connections>
                                             </button>
                                         </subviews>
@@ -98,9 +98,9 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="buttonNo" destination="T0i-3U-obX" id="pSJ-Wn-Mv1"/>
-                        <outlet property="buttonYes" destination="9ul-25-Iw5" id="L94-Dc-hgg"/>
                         <outlet property="counterLabel" destination="F1f-g9-xIH" id="hcH-nM-hlA"/>
+                        <outlet property="pressButtonNo" destination="T0i-3U-obX" id="ryv-UB-Quo"/>
+                        <outlet property="pressButtonYes" destination="9ul-25-Iw5" id="eW3-Jk-gTI"/>
                         <outlet property="previewImage" destination="BP9-zC-HhO" id="S8G-jD-O42"/>
                         <outlet property="questionLabel" destination="aze-Fc-ZPo" id="9fJ-jp-W1M"/>
                         <outlet property="questionsTitleLabel" destination="qhO-kE-9vj" id="WGM-OR-lxn"/>

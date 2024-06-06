@@ -29,8 +29,7 @@ struct QuizQuestion {
     let correctAnswer: Bool
     
 }
-//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+//---------------
 // имитация входящих данных (mock-данные)
 
 let theGodfather = QuizQuestion(image: "The Godfather", text: "Рейтинг этого фильма больше чем 9.1 ?", correctAnswer: true)
@@ -58,9 +57,12 @@ private let question: [QuizQuestion] = [
     tesla,
     vivarium
 ]
-// Массив был создан именно в таком виде для наглядности, а также для тренировки написания кода, так данный проект является учебным)))
+
+private let currentQuestion = question[currentQuestionIndex]
+
+// Массив был создан именно в таком виде для наглядности, а также для тренировки написания кода, так как данный проект является учебным)))
 // Можно было бы сократить код внося данные сразу в массив без создания переменных
-//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//---------------
 
 private var currentQuestionIndex = 0
 private var currentAnswers = 0
@@ -69,8 +71,8 @@ final class MovieQuizViewController: UIViewController {
     
     // MARK: - Lifecycle
     
-    @IBOutlet private weak var buttonYes: UIButton!
-    @IBOutlet private weak var buttonNo: UIButton!
+    @IBOutlet private weak var pressButtonYes: UIButton!
+    @IBOutlet private weak var pressButtonNo: UIButton!
     @IBOutlet private weak var questionsTitleLabel: UILabel!
     @IBOutlet private weak var counterLabel: UILabel!
     @IBOutlet private weak var questionLabel: UILabel!
@@ -82,38 +84,58 @@ final class MovieQuizViewController: UIViewController {
         setupFonts()
         setupUI()
         
-        let currentQuestion = question[currentQuestionIndex]
         show(quiz: convert(model: currentQuestion))
+        
     }
     
-    @IBAction private func buttonYes(_ sender: UIButton) {
+    @IBAction private func pressButtonYes(_ sender: UIButton) {
+        
+        let answer: Bool = true
+        if answer == question[currentQuestionIndex].correctAnswer {
+            currentAnswers += 1
+            showAnswerResult(isCorrect: answer)
+            
+        } else {
+            showAnswerResult(isCorrect: answer)
+            
+        }
+        
     }
     
-    @IBAction private func buttonNo(_ sender: UIButton) {
+    @IBAction private func pressButtonNo(_ sender: UIButton) {
+        
+        let answer: Bool = false
+        if answer == question[currentQuestionIndex].correctAnswer {
+            currentAnswers += 1
+            showAnswerResult(isCorrect: answer)
+        } else {
+            showAnswerResult(isCorrect: answer)
+        }
+        
     }
     
     // функция установки заданных шрифтов
     
     private func setupFonts() {
         
-        buttonYes.titleLabel?.font = UIFont(name: "YSDisplay-Medium", size: 20)
-        buttonNo.titleLabel?.font = UIFont(name: "YSDisplay-Medium", size: 20)
+        pressButtonYes.titleLabel?.font = UIFont(name: "YSDisplay-Medium", size: 20)
+        pressButtonNo.titleLabel?.font = UIFont(name: "YSDisplay-Medium", size: 20)
         questionsTitleLabel.font = UIFont(name: "YSDisplay-Medium", size: 20)
         counterLabel.font = UIFont(name: "YSDisplay-Medium", size: 20)
         questionLabel.font = UIFont(name: "YSDisplay-Bold", size: 23)
         
     }
-    // функция установки заданных размеров и радиусов
+    // функция установки заданных размеров, цветов и радиусов
     
     private func setupUI() {
         
         previewImage.layer.cornerRadius = 20
-        buttonYes.layer.cornerRadius = 15
-        buttonYes.setImage(UIImage(systemName: "checkmark.circle"), for: .normal)
-        buttonYes.tintColor = .ypGreen
-        buttonNo.layer.cornerRadius = 15
-        buttonNo.setImage(UIImage(systemName: "hand.raised"), for: .normal)
-        buttonNo.tintColor = .ypRed
+        pressButtonYes.layer.cornerRadius = 15
+        pressButtonYes.setImage(UIImage(systemName: "checkmark.circle"), for: .normal)
+        pressButtonYes.tintColor = .ypGreen
+        pressButtonNo.layer.cornerRadius = 15
+        pressButtonNo.setImage(UIImage(systemName: "hand.raised"), for: .normal)
+        pressButtonNo.tintColor = .ypRed
         
     }
     
@@ -135,6 +157,34 @@ final class MovieQuizViewController: UIViewController {
         questionLabel.text = step.question
         previewImage.image = step.image
         
+    }
+    
+    // функция индикации правильного и не правильного ответа
+    
+    private func showAnswerResult(isCorrect: Bool) {
+        
+        previewImage.layer.masksToBounds = true
+        previewImage.layer.borderWidth = 8
+        previewImage.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            self.showNextQuestionOrResults()
+        }
+                
+    }
+    
+    private func showNextQuestionOrResults() {
+        if currentQuestionIndex == question.count - 1 {
+            
+            
+        } else {
+            currentQuestionIndex += 1
+            
+            let nextQuestion = question[currentQuestionIndex]
+            let viewModel = convert(model: nextQuestion)
+            
+            show(quiz: viewModel)
+        }
     }
     
 }
