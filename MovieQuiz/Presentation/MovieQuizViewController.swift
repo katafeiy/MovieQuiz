@@ -92,9 +92,9 @@ final class MovieQuizViewController: UIViewController {
     @IBAction private func pressButtonYes(_ sender: UIButton) {
         
         let answer: Bool = true
-    
+        
         showAnswerResult(isCorrect: answer == question[currentQuestionIndex].correctAnswer)
-                
+        
     }
     
     @IBAction private func pressButtonNo(_ sender: UIButton) {
@@ -157,17 +157,38 @@ final class MovieQuizViewController: UIViewController {
         previewImage.layer.masksToBounds = true
         previewImage.layer.borderWidth = 8
         previewImage.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
-                
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.showNextQuestionOrResults()
             self.previewImage.layer.borderColor = UIColor.ypBackground.cgColor
         }
         
-               
+        
     }
+    
+    
+    
+    
     
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == question.count - 1 {
+            
+            let alert = UIAlertController(title: "Игра окончена!",
+                                          message: "Ваш результат: \(currentAnswers)/ \(question.count)",
+                                          preferredStyle: .alert)
+            
+            let action = UIAlertAction(title: "Сыграть еще разок?", style: .default) { _ in
+                
+                currentQuestionIndex = 0
+                currentAnswers = 0
+                
+                self.show(quiz: self.convert(model:currentQuestion))
+                
+            }
+            
+            alert.addAction(action)
+            
+            self.present(alert, animated: true, completion: nil)
             
         } else {
             
@@ -175,8 +196,8 @@ final class MovieQuizViewController: UIViewController {
             
             let nextQuestion = question[currentQuestionIndex]
             let viewModel = convert(model: nextQuestion)
-            
             show(quiz: viewModel)
+            
         }
     }
     
