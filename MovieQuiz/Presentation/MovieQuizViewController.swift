@@ -29,7 +29,10 @@ struct QuizQuestion {
     let correctAnswer: Bool
     
 }
-//---------------
+
+private var currentQuestionIndex = 0
+private var currentAnswers = 0
+
 // имитация входящих данных (mock-данные)
 
 let theGodfather = QuizQuestion(image: "The Godfather", text: "Рейтинг этого фильма больше чем 9.1 ?", correctAnswer: true)
@@ -44,6 +47,9 @@ let tesla = QuizQuestion(image: "Tesla", text: "Рейтинг этого фил
 let vivarium = QuizQuestion(image: "Vivarium", text: "Рейтинг этого фильма больше чем 6.2 ?", correctAnswer: false)
 
 // создания массива входящих данных
+
+// Массив был создан именно в таком виде для наглядности, а также для тренировки написания кода, так как данный проект является учебным)))
+// Можно было бы сократить код внося данные сразу в массив без создания переменных
 
 private let question: [QuizQuestion] = [
     theGodfather,
@@ -60,12 +66,7 @@ private let question: [QuizQuestion] = [
 
 private let currentQuestion = question[currentQuestionIndex]
 
-// Массив был создан именно в таком виде для наглядности, а также для тренировки написания кода, так как данный проект является учебным)))
-// Можно было бы сократить код внося данные сразу в массив без создания переменных
 //---------------
-
-private var currentQuestionIndex = 0
-private var currentAnswers = 0
 
 final class MovieQuizViewController: UIViewController {
     
@@ -91,26 +92,16 @@ final class MovieQuizViewController: UIViewController {
     @IBAction private func pressButtonYes(_ sender: UIButton) {
         
         let answer: Bool = true
-        if answer == question[currentQuestionIndex].correctAnswer {
-            currentAnswers += 1
-            showAnswerResult(isCorrect: answer)
-            
-        } else {
-            showAnswerResult(isCorrect: answer)
-            
-        }
-        
+    
+        showAnswerResult(isCorrect: answer == question[currentQuestionIndex].correctAnswer)
+                
     }
     
     @IBAction private func pressButtonNo(_ sender: UIButton) {
         
         let answer: Bool = false
-        if answer == question[currentQuestionIndex].correctAnswer {
-            currentAnswers += 1
-            showAnswerResult(isCorrect: answer)
-        } else {
-            showAnswerResult(isCorrect: answer)
-        }
+        
+        showAnswerResult(isCorrect: answer == question[currentQuestionIndex].correctAnswer)
         
     }
     
@@ -166,18 +157,20 @@ final class MovieQuizViewController: UIViewController {
         previewImage.layer.masksToBounds = true
         previewImage.layer.borderWidth = 8
         previewImage.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
-        
+                
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.showNextQuestionOrResults()
+            self.previewImage.layer.borderColor = UIColor.ypBackground.cgColor
         }
-                
+        
+               
     }
     
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == question.count - 1 {
             
-            
         } else {
+            
             currentQuestionIndex += 1
             
             let nextQuestion = question[currentQuestionIndex]
