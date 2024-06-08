@@ -18,6 +18,12 @@ struct QuizResultsViewModel {
     let text: String
     let buttonText: String
     
+    init(title: String, text: String, buttonText: String) {
+        self.title = title
+        self.text = text
+        self.buttonText = buttonText
+    }
+    
 }
 
 // структура вопроса
@@ -158,6 +164,10 @@ final class MovieQuizViewController: UIViewController {
         previewImage.layer.borderWidth = 8
         previewImage.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
         
+        if isCorrect == true {
+            currentAnswers += 1
+        }
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.showNextQuestionOrResults()
             self.previewImage.layer.borderColor = UIColor.ypBackground.cgColor
@@ -166,29 +176,15 @@ final class MovieQuizViewController: UIViewController {
         
     }
     
-    
-    
-    
-    
     private func showNextQuestionOrResults() {
+        
         if currentQuestionIndex == question.count - 1 {
             
-            let alert = UIAlertController(title: "Игра окончена!",
-                                          message: "Ваш результат: \(currentAnswers)/ \(question.count)",
-                                          preferredStyle: .alert)
+            let result = QuizResultsViewModel(title: "Раунд окончен!!!",
+                                              text: "Ваш результат: \(currentAnswers)/ \(question.count)",
+                                              buttonText: "Сыграть еще разок?")
             
-            let action = UIAlertAction(title: "Сыграть еще разок?", style: .default) { _ in
-                
-                currentQuestionIndex = 0
-                currentAnswers = 0
-                
-                self.show(quiz: self.convert(model:currentQuestion))
-                
-            }
-            
-            alert.addAction(action)
-            
-            self.present(alert, animated: true, completion: nil)
+            show(quiz: result)
             
         } else {
             
@@ -199,6 +195,27 @@ final class MovieQuizViewController: UIViewController {
             show(quiz: viewModel)
             
         }
+    }
+    
+    private func show(quiz result: QuizResultsViewModel) {
+        
+        let alert = UIAlertController(title: result.title,
+                                      message: result.text,
+                                      preferredStyle: .alert)
+        
+        let action = UIAlertAction(title: result.buttonText, style: .default) { _ in
+            
+            currentQuestionIndex = 0
+            currentAnswers = 0
+            
+            self.show(quiz: self.convert(model:currentQuestion))
+            
+        }
+        
+        alert.addAction(action)
+        
+        self.present(alert, animated: true, completion: nil)
+        
     }
     
 }
