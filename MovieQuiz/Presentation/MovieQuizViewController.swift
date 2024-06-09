@@ -96,9 +96,6 @@ final class MovieQuizViewController: UIViewController {
     @IBAction private func pressButtonYes(_ sender: UIButton) {
         
         let answer: Bool = true
-        
-        
-        
         showAnswerResult(isCorrect: answer == question[currentQuestionIndex].correctAnswer)
         
     }
@@ -106,8 +103,6 @@ final class MovieQuizViewController: UIViewController {
     @IBAction private func pressButtonNo(_ sender: UIButton) {
         
         let answer: Bool = false
-        
-        
         
         showAnswerResult(isCorrect: answer == question[currentQuestionIndex].correctAnswer)
         
@@ -118,10 +113,17 @@ final class MovieQuizViewController: UIViewController {
     private func setupFonts() {
         
         pressButtonYes.titleLabel?.font = UIFont(name: "YSDisplay-Medium", size: 20)
+        pressButtonYes.setTitleColor(.ypBlack, for: .normal)
+        pressButtonYes.backgroundColor = .ypWhite
         pressButtonNo.titleLabel?.font = UIFont(name: "YSDisplay-Medium", size: 20)
+        pressButtonNo.setTitleColor(.ypBlack, for: .normal)
+        pressButtonNo.backgroundColor = .ypWhite
         questionsTitleLabel.font = UIFont(name: "YSDisplay-Medium", size: 20)
+        questionsTitleLabel.textColor = .ypWhite
         counterLabel.font = UIFont(name: "YSDisplay-Medium", size: 20)
+        counterLabel.textColor = .ypWhite
         questionLabel.font = UIFont(name: "YSDisplay-Bold", size: 23)
+        questionLabel.textColor = .ypWhite
         
     }
     // функция установки заданных размеров, цветов и радиусов
@@ -191,8 +193,8 @@ final class MovieQuizViewController: UIViewController {
         if currentQuestionIndex == question.count - 1 {
             
             let result = QuizResultsViewModel(title: "Раунд окончен!!!",
-                                              text: currentAnswers == 10 ? "Отличный результат: \(currentAnswers)/ \(question.count)" : "Ваш результат: \(currentAnswers)/ \(question.count)",
-                                              buttonText: currentAnswers == 10 ? "Повторим?" : "Сыграть еще разок?")
+                                              text: currentAnswers == question.count ? "Отличный результат: \(currentAnswers)/ \(question.count)" : "Ваш результат: \(currentAnswers)/ \(question.count)",
+                                              buttonText: currentAnswers == question.count ? "Хотите повторить?" : "Сыграть еще разок?")
             
             show(quiz: result)
             
