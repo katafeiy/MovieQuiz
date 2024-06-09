@@ -103,7 +103,6 @@ final class MovieQuizViewController: UIViewController {
     @IBAction private func pressButtonNo(_ sender: UIButton) {
         
         let answer: Bool = false
-        
         showAnswerResult(isCorrect: answer == question[currentQuestionIndex].correctAnswer)
         
     }
