@@ -57,7 +57,7 @@ let vivarium = QuizQuestion(image: "Vivarium", text: "Рейтинг этого 
 // Массив был создан именно в таком виде для наглядности, а также для тренировки написания кода, так как данный проект является учебным)))
 // Можно было бы сократить код внося данные сразу в массив без создания переменных
 
-private let question: [QuizQuestion] = [
+private var question: [QuizQuestion] = [
     theGodfather,
     theDarkKnight,
     killBill,
@@ -70,7 +70,7 @@ private let question: [QuizQuestion] = [
     vivarium
 ]
 
-private let currentQuestion = question[currentQuestionIndex]
+private var currentQuestion = question[currentQuestionIndex]
 
 final class MovieQuizViewController: UIViewController {
     
@@ -86,9 +86,10 @@ final class MovieQuizViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
         setupFonts()
         setupUI()
-        blockingButtonPresses(isEnable: false)
+        randomSortArray()
         show(quiz: convert(model: currentQuestion))
         
     }
@@ -196,6 +197,7 @@ final class MovieQuizViewController: UIViewController {
                                               buttonText: currentAnswers == question.count ? "Хотите повторить?" : "Сыграть еще разок?")
             
             show(quiz: result)
+            randomSortArray()
             
         } else {
             
@@ -216,12 +218,12 @@ final class MovieQuizViewController: UIViewController {
                                       message: result.text,
                                       preferredStyle: .alert)
         
-        let action = UIAlertAction(title: result.buttonText, style: .default) { _ in
+        let action = UIAlertAction(title: result.buttonText, style: .default) { [self] _ in
             
             currentQuestionIndex = 0
             currentAnswers = 0
             
-            self.show(quiz: self.convert(model:currentQuestion))
+            show(quiz:convert(model:currentQuestion))
             
         }
         
@@ -244,6 +246,15 @@ final class MovieQuizViewController: UIViewController {
         
         pressButtonYes.isEnabled = isEnable
         pressButtonNo.isEnabled = isEnable
+        
+    }
+    
+    // функция сортировки массива случайным образом
+    
+    private func randomSortArray() {
+        
+        question = question.shuffled()
+        currentQuestion = question[currentQuestionIndex]
         
     }
     
