@@ -43,7 +43,7 @@ private var currentAnswers = 0
 
 let theGodfather = QuizQuestion(image: "The Godfather", text: "Рейтинг этого фильма больше чем 9.1 ?", correctAnswer: true)
 let theDarkKnight = QuizQuestion(image: "The Dark Knight", text: "Рейтинг этого фильма больше чем 8.7 ?", correctAnswer: true)
-let killBill = QuizQuestion(image: "Kill Bill", text: "Рейтинг этого фильма больше чем 7 ?", correctAnswer: true)
+let killBill = QuizQuestion(image: "Kill Bill", text: "Рейтинг этого фильма больше чем 7.7 ?", correctAnswer: true)
 let theAvengers =  QuizQuestion(image: "The Avengers", text: "Рейтинг этого фильма больше чем 7.5 ?", correctAnswer: true)
 let deadpool = QuizQuestion(image: "Deadpool", text: "Рейтинг этого фильма больше чем 6.8 ?", correctAnswer: true)
 let theGreenKnight = QuizQuestion(image: "The Green Knight", text: "Рейтинг этого фильма больше чем 6.5 ?", correctAnswer: true)
@@ -72,8 +72,6 @@ private let question: [QuizQuestion] = [
 
 private let currentQuestion = question[currentQuestionIndex]
 
-//---------------
-
 final class MovieQuizViewController: UIViewController {
     
     // MARK: - Lifecycle
@@ -90,7 +88,7 @@ final class MovieQuizViewController: UIViewController {
         
         setupFonts()
         setupUI()
-        
+        blockingButtonPresses(isEnable: false)
         show(quiz: convert(model: currentQuestion))
         
     }
@@ -99,6 +97,8 @@ final class MovieQuizViewController: UIViewController {
         
         let answer: Bool = true
         
+        
+        
         showAnswerResult(isCorrect: answer == question[currentQuestionIndex].correctAnswer)
         
     }
@@ -106,6 +106,8 @@ final class MovieQuizViewController: UIViewController {
     @IBAction private func pressButtonNo(_ sender: UIButton) {
         
         let answer: Bool = false
+        
+        
         
         showAnswerResult(isCorrect: answer == question[currentQuestionIndex].correctAnswer)
         
@@ -127,6 +129,9 @@ final class MovieQuizViewController: UIViewController {
     private func setupUI() {
         
         previewImage.layer.cornerRadius = 20
+        previewImage.layer.masksToBounds = true
+        previewImage.layer.borderWidth = 8
+        previewImage.layer.borderColor = UIColor.ypBackground.cgColor
         pressButtonYes.layer.cornerRadius = 15
         pressButtonYes.setImage(UIImage(systemName: "checkmark.circle"), for: .normal)
         pressButtonYes.tintColor = .ypGreen
@@ -154,15 +159,19 @@ final class MovieQuizViewController: UIViewController {
         questionLabel.text = step.question
         previewImage.image = step.image
         
+        blockingButtonPresses(isEnable: true)
+        
     }
     
     // функция индикации правильного и не правильного ответа
     
     private func showAnswerResult(isCorrect: Bool) {
         
-        previewImage.layer.masksToBounds = true
-        previewImage.layer.borderWidth = 8
+        blockingButtonPresses(isEnable: true)
+        
         previewImage.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
+        
+        blockingButtonPresses(isEnable: false)
         
         if isCorrect == true {
             currentAnswers += 1
@@ -173,16 +182,17 @@ final class MovieQuizViewController: UIViewController {
             self.previewImage.layer.borderColor = UIColor.ypBackground.cgColor
         }
         
-        
     }
+    
+    // функция завершения игры или вывода следующего вопроса
     
     private func showNextQuestionOrResults() {
         
         if currentQuestionIndex == question.count - 1 {
             
             let result = QuizResultsViewModel(title: "Раунд окончен!!!",
-                                              text: "Ваш результат: \(currentAnswers)/ \(question.count)",
-                                              buttonText: "Сыграть еще разок?")
+                                              text: currentAnswers == 10 ? "Отличный результат: \(currentAnswers)/ \(question.count)" : "Ваш результат: \(currentAnswers)/ \(question.count)",
+                                              buttonText: currentAnswers == 10 ? "Повторим?" : "Сыграть еще разок?")
             
             show(quiz: result)
             
@@ -196,6 +206,8 @@ final class MovieQuizViewController: UIViewController {
             
         }
     }
+    
+    // функция выбора повторной игры или выхода их приложения
     
     private func show(quiz result: QuizResultsViewModel) {
         
@@ -212,9 +224,25 @@ final class MovieQuizViewController: UIViewController {
             
         }
         
+        let cancel = UIAlertAction(title: "Выйти?", style: .default) { _ in
+            
+            exit(0)
+            
+        }
+        
         alert.addAction(action)
+        alert.addAction(cancel)
         
         self.present(alert, animated: true, completion: nil)
+        
+    }
+    
+    // функция блокировки кнопок
+    
+    private func blockingButtonPresses(isEnable: Bool) {
+        
+        pressButtonYes.isEnabled = isEnable
+        pressButtonNo.isEnabled = isEnable
         
     }
     
