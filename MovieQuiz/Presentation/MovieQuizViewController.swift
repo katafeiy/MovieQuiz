@@ -133,7 +133,7 @@ final class MovieQuizViewController: UIViewController {
         previewImage.layer.cornerRadius = 20
         previewImage.layer.masksToBounds = true
         previewImage.layer.borderWidth = 8
-        previewImage.layer.borderColor = UIColor.ypBackground.cgColor
+        previewImage.layer.borderColor = UIColor.clear.cgColor
         pressButtonYes.layer.cornerRadius = 15
         pressButtonYes.setImage(UIImage(systemName: "checkmark.circle"), for: .normal)
         pressButtonYes.tintColor = .ypGreen
@@ -181,7 +181,7 @@ final class MovieQuizViewController: UIViewController {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.showNextQuestionOrResults()
-            self.previewImage.layer.borderColor = UIColor.ypBackground.cgColor
+            self.previewImage.layer.borderColor = UIColor.clear.cgColor
         }
         
     }
