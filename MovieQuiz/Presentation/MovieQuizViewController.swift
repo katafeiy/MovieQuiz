@@ -90,6 +90,9 @@ final class MovieQuizViewController: UIViewController {
         setupFonts()
         setupUI()
         randomSortArray()
+        
+    // здесь в качестве аргумента передаётся функция конвертации 
+        
         show(quiz: convert(model: currentQuestion))
         
     }
@@ -97,14 +100,16 @@ final class MovieQuizViewController: UIViewController {
     @IBAction private func pressButtonYes(_ sender: UIButton) {
         
         let answer: Bool = true
-        showAnswerResult(isCorrect: answer == question[currentQuestionIndex].correctAnswer)
+        let currentQuestion = question[currentQuestionIndex]
+        showAnswerResult(isCorrect: answer == currentQuestion.correctAnswer)
         
     }
     
     @IBAction private func pressButtonNo(_ sender: UIButton) {
         
         let answer: Bool = false
-        showAnswerResult(isCorrect: answer == question[currentQuestionIndex].correctAnswer)
+        let currentQuestion = question[currentQuestionIndex]
+        showAnswerResult(isCorrect: answer == currentQuestion.correctAnswer)
         
     }
     
@@ -179,9 +184,10 @@ final class MovieQuizViewController: UIViewController {
             currentAnswers += 1
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.showNextQuestionOrResults()
-            self.previewImage.layer.borderColor = UIColor.clear.cgColor
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            guard let self = self else { return }
+            showNextQuestionOrResults()
+            previewImage.layer.borderColor = UIColor.clear.cgColor
         }
         
     }
@@ -218,12 +224,15 @@ final class MovieQuizViewController: UIViewController {
                                       message: result.text,
                                       preferredStyle: .alert)
         
-        let action = UIAlertAction(title: result.buttonText, style: .default) { [self] _ in
+        let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in
             
+            guard let self = self else { return }
             currentQuestionIndex = 0
             currentAnswers = 0
             
-            show(quiz:convert(model:currentQuestion))
+            let firstQuestion = question[currentQuestionIndex]
+            let viewModel = convert(model: firstQuestion)
+            show(quiz: viewModel)
             
         }
         
