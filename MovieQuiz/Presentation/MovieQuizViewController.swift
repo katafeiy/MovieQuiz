@@ -1,77 +1,5 @@
 import UIKit
 
-// для состояния "Вопрос показан"
-
-struct QuizStepViewModel {
-    
-    let image: UIImage
-    let question: String
-    let questionNumber: String
-    
-}
-
-// для состояния "Результат квиза"
-
-struct QuizResultsViewModel {
-    
-    let title: String
-    let text: String
-    let buttonText: String
-    
-    init(title: String, text: String, buttonText: String) {
-        self.title = title
-        self.text = text
-        self.buttonText = buttonText
-    }
-    
-}
-
-// структура вопроса
-
-struct QuizQuestion {
-    
-    let image: String
-    let text: String
-    let correctAnswer: Bool
-    
-}
-
-private var currentQuestionIndex = 0
-private var currentAnswers = 0
-
-// имитация входящих данных (mock-данные)
-
-let theGodfather = QuizQuestion(image: "The Godfather", text: "Рейтинг этого фильма больше чем 9.1 ?", correctAnswer: true)
-let theDarkKnight = QuizQuestion(image: "The Dark Knight", text: "Рейтинг этого фильма больше чем 8.7 ?", correctAnswer: true)
-let killBill = QuizQuestion(image: "Kill Bill", text: "Рейтинг этого фильма больше чем 7.7 ?", correctAnswer: true)
-let theAvengers =  QuizQuestion(image: "The Avengers", text: "Рейтинг этого фильма больше чем 7.5 ?", correctAnswer: true)
-let deadpool = QuizQuestion(image: "Deadpool", text: "Рейтинг этого фильма больше чем 6.8 ?", correctAnswer: true)
-let theGreenKnight = QuizQuestion(image: "The Green Knight", text: "Рейтинг этого фильма больше чем 6.5 ?", correctAnswer: true)
-let old = QuizQuestion(image: "Old", text: "Рейтинг этого фильма больше чем 5.9 ?", correctAnswer: false)
-let theIceAgeAdventuresOfBuckWild = QuizQuestion(image: "The Ice Age Adventures of Buck Wild", text: "Рейтинг этого фильма больше чем 5.6 ?", correctAnswer: false)
-let tesla = QuizQuestion(image: "Tesla", text: "Рейтинг этого фильма больше чем 5.5 ?", correctAnswer: false)
-let vivarium = QuizQuestion(image: "Vivarium", text: "Рейтинг этого фильма больше чем 6.2 ?", correctAnswer: false)
-
-// создания массива входящих данных
-
-// Массив был создан именно в таком виде для наглядности, а также для тренировки написания кода, так как данный проект является учебным)))
-// Можно было бы сократить код внося данные сразу в массив без создания переменных
-
-private var question: [QuizQuestion] = [
-    theGodfather,
-    theDarkKnight,
-    killBill,
-    theAvengers,
-    deadpool,
-    theGreenKnight,
-    old,
-    theIceAgeAdventuresOfBuckWild,
-    tesla,
-    vivarium
-]
-
-private var currentQuestion = question[currentQuestionIndex]
-
 final class MovieQuizViewController: UIViewController {
     
     // MARK: - Lifecycle
@@ -83,24 +11,26 @@ final class MovieQuizViewController: UIViewController {
     @IBOutlet private weak var questionLabel: UILabel!
     @IBOutlet private weak var previewImage: UIImageView!
     
+    private var currentAnswers = 0
+    private var currentQuestionIndex = 0
+    private let questionAmount: Int = 10
+    private var questionFactory: QuestionFactory = QuestionFactory.init()
+    private var currentQuestion: QuizQuestion?
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
         setupFonts()
         setupUI()
-        randomSortArray()
-        
-    // здесь в качестве аргумента передаётся функция конвертации 
-        
-        show(quiz: convert(model: currentQuestion))
-        
+        setupQuestions()
     }
     
     @IBAction private func pressButtonYes(_ sender: UIButton) {
         
         let answer: Bool = true
-        let currentQuestion = question[currentQuestionIndex]
+        guard let currentQuestion = currentQuestion else { return }
         showAnswerResult(isCorrect: answer == currentQuestion.correctAnswer)
         
     }
@@ -108,7 +38,7 @@ final class MovieQuizViewController: UIViewController {
     @IBAction private func pressButtonNo(_ sender: UIButton) {
         
         let answer: Bool = false
-        let currentQuestion = question[currentQuestionIndex]
+        guard let currentQuestion = currentQuestion else { return }
         showAnswerResult(isCorrect: answer == currentQuestion.correctAnswer)
         
     }
@@ -148,13 +78,24 @@ final class MovieQuizViewController: UIViewController {
         
     }
     
+    // функция создания вопроса
+    
+    private func setupQuestions() {
+        
+        guard let question = questionFactory.requestNextQuestion() else { return }
+        
+        currentQuestion = question
+        let viewModel = convert(model: question)
+        show(quiz: viewModel)
+    }
+    
     // функция конвертации
     
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         
         let questionStep = QuizStepViewModel(image: UIImage(named: model.image) ?? UIImage.init(),
                                              question: model.text,
-                                             questionNumber: "\(currentQuestionIndex + 1)/\(question.count)")
+                                             questionNumber: "\(currentQuestionIndex + 1)/\(questionAmount)")
         return questionStep
     }
     
@@ -165,7 +106,7 @@ final class MovieQuizViewController: UIViewController {
         counterLabel.text = step.questionNumber
         questionLabel.text = step.question
         previewImage.image = step.image
-        
+    
         blockingButtonPresses(isEnable: true)
         
     }
@@ -196,23 +137,18 @@ final class MovieQuizViewController: UIViewController {
     
     private func showNextQuestionOrResults() {
         
-        if currentQuestionIndex == question.count - 1 {
+        if currentQuestionIndex == questionAmount - 1 {
             
             let result = QuizResultsViewModel(title: "Раунд окончен!!!",
-                                              text: currentAnswers == question.count ? "Отличный результат: \(currentAnswers)/ \(question.count)" : "Ваш результат: \(currentAnswers)/ \(question.count)",
-                                              buttonText: currentAnswers == question.count ? "Хотите повторить?" : "Сыграть еще разок?")
+                                              text: currentAnswers == questionAmount ? "Отличный результат, вы ответели на \(currentAnswers) из \(questionAmount)!" : "Ваш результат: \(currentAnswers) из \(questionAmount), попробуйте еще раз!",
+                                              buttonText: currentAnswers == questionAmount ? "Хотите повторить?" : "Сыграть еще разок?")
             
             show(quiz: result)
-            randomSortArray()
             
         } else {
             
             currentQuestionIndex += 1
-            
-            let nextQuestion = question[currentQuestionIndex]
-            let viewModel = convert(model: nextQuestion)
-            show(quiz: viewModel)
-            
+            setupQuestions()
         }
     }
     
@@ -229,10 +165,10 @@ final class MovieQuizViewController: UIViewController {
             guard let self = self else { return }
             currentQuestionIndex = 0
             currentAnswers = 0
+           
+            questionFactory = QuestionFactory()
             
-            let firstQuestion = question[currentQuestionIndex]
-            let viewModel = convert(model: firstQuestion)
-            show(quiz: viewModel)
+            setupQuestions()
             
         }
         
@@ -258,77 +194,5 @@ final class MovieQuizViewController: UIViewController {
         
     }
     
-    // функция сортировки массива случайным образом
-    
-    private func randomSortArray() {
-        
-        question = question.shuffled()
-        currentQuestion = question[currentQuestionIndex]
-        
-    }
-    
 }
 
-/*
- Mock-данные
- 
- 
- Картинка: The Godfather
- Настоящий рейтинг: 9,2
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: ДА
- 
- 
- Картинка: The Dark Knight
- Настоящий рейтинг: 9
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: ДА
- 
- 
- Картинка: Kill Bill
- Настоящий рейтинг: 8,1
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: ДА
- 
- 
- Картинка: The Avengers
- Настоящий рейтинг: 8
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: ДА
- 
- 
- Картинка: Deadpool
- Настоящий рейтинг: 8
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: ДА
- 
- 
- Картинка: The Green Knight
- Настоящий рейтинг: 6,6
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: ДА
- 
- 
- Картинка: Old
- Настоящий рейтинг: 5,8
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: НЕТ
- 
- 
- Картинка: The Ice Age Adventures of Buck Wild
- Настоящий рейтинг: 4,3
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: НЕТ
- 
- 
- Картинка: Tesla
- Настоящий рейтинг: 5,1
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: НЕТ
- 
- 
- Картинка: Vivarium
- Настоящий рейтинг: 5,8
- Вопрос: Рейтинг этого фильма больше чем 6?
- Ответ: НЕТ
- */
