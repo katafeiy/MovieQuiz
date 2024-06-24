@@ -173,7 +173,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
             
             let result = AlertModel(title: "Раунд окончен!!!",
                                     message: currentAnswers == questionAmount ? "Отличный результат, вы ответели на \(currentAnswers) из \(questionAmount)!" : "Ваш результат: \(currentAnswers) из \(questionAmount), попробуйте еще раз!",
-                                    buttonText: currentAnswers == questionAmount ? "Хотите повторить?" : "Сыграть еще разок?", completion: completion)
+                                    buttonText: currentAnswers == questionAmount ? "Хотите повторить?" : "Сыграть еще разок?", 
+                                    completion: completion)
             
             alert?.show(quiz: result)
             

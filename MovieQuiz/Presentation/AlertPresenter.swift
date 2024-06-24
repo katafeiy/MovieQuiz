@@ -1,10 +1,3 @@
-//
-//  AlertPresenter.swift
-//  MovieQuiz
-//
-//  Created by Константин Филиппов on 24.06.2024.
-//
-
 import UIKit
 
 // функция выбора повторной игры или выхода их приложения

@@ -1,10 +1,3 @@
-//
-//  QuestionFactory.swift
-//  MovieQuiz
-//
-//  Created by Константин Филиппов on 20.06.2024.
-//
-
 import Foundation
 
 class QuestionFactory: QuestionFactoryProtocol {
@@ -14,10 +7,6 @@ class QuestionFactory: QuestionFactoryProtocol {
     // имитация входящих данных (mock-данные)
     
     private var questions: [QuizQuestion]
-    
-    //    init(delegate: QuestionFactoryDelegate?) {
-    //
-    //        self.delegate = delegate
     
     init() {
         
@@ -73,30 +62,6 @@ class QuestionFactory: QuestionFactoryProtocol {
         return
     }
 }
-
-//    var oldQuestion = Set<Int>()
-//
-//    func requestNextQuestion() -> QuizQuestion? {
-//
-//        var index = (0..<question.count).randomElement() ?? 0
-//
-//        while oldQuestion.contains(index) && oldQuestion.count != question.count {
-//
-//            index = (0..<question.count).randomElement() ?? 0
-//
-//        }
-//
-//        if oldQuestion.count == question.count {
-//            oldQuestion = Set<Int>()
-//        }
-//
-//        oldQuestion.insert(index)
-//        return question[safe: index]
-//
-//    }
-
-
-
 
 
 /*
