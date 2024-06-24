@@ -9,9 +9,15 @@ import Foundation
 
 class QuestionFactory: QuestionFactoryProtocol {
     
+    weak var delegate: QuestionFactoryDelegate?
+    
     // имитация входящих данных (mock-данные)
     
-    private var question: [QuizQuestion]
+    private var questions: [QuizQuestion]
+    
+    //    init(delegate: QuestionFactoryDelegate?) {
+    //
+    //        self.delegate = delegate
     
     init() {
         
@@ -27,7 +33,7 @@ class QuestionFactory: QuestionFactoryProtocol {
         let vivarium = QuizQuestion(image: "Vivarium", text: "Рейтинг этого фильма больше чем 6.2 ?", correctAnswer: false)
         
         
-        question = [
+        questions = [
             theGodfather,
             theDarkKnight,
             killBill,
@@ -44,15 +50,27 @@ class QuestionFactory: QuestionFactoryProtocol {
         // Можно было бы сократить код внося данные сразу в массив без создания переменных
     }
     
-    func requestNextQuestion() -> QuizQuestion? {
+    func setDelegate(_ delegate: QuestionFactoryDelegate) {
+        self.delegate = delegate
+    }
+    
+    
+    func requestNextQuestion() {
         
-        guard let index = (0..<question.count).randomElement() else {
-            return nil
+        guard let index = (0..<questions.count).randomElement() else {
+            
+            delegate?.didReceiveNextQuestion(question: nil)
+            
+            return
         }
         
-        let quizQuestion = question.remove(at: index)
+        var question = questions[safe: index]
         
-        return quizQuestion
+        delegate?.didReceiveNextQuestion(question: question)
+        
+        question = questions.remove(at: index)
+        
+        return
     }
 }
 
