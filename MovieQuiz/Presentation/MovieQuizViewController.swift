@@ -17,10 +17,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     private var questionFactory: QuestionFactoryProtocol?
     private var currentQuestion: QuizQuestion?
     private var alert: AlertPresenterProtocol?
+    private var statisticService: StatisticServiceProtocol = StatisticService()
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let statisticService = StatisticService()
         
         let questionFactory = QuestionFactory()
         let alert = AlertPresenter()
@@ -171,9 +174,24 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         
         if currentQuestionIndex == questionAmount - 1 {
             
+            statisticService.saveResult(correct: currentAnswers, total: questionAmount)
+            
             let result = AlertModel(title: "Раунд окончен!!!",
-                                    message: currentAnswers == questionAmount ? "Отличный результат, вы ответели на \(currentAnswers) из \(questionAmount)!" : "Ваш результат: \(currentAnswers) из \(questionAmount), попробуйте еще раз!",
-                                    buttonText: currentAnswers == questionAmount ? "Хотите повторить?" : "Сыграть еще разок?", 
+                                    message: currentAnswers == questionAmount ? 
+                                    
+                                    "Отличный результат: \(currentAnswers) из \(questionAmount)!" +
+                                    "Количество завершенных квизов: \(statisticService.gamesCount)\n" +
+                                    "Рекорд: \(statisticService.bestGame.correct) из \(statisticService.bestGame.total) [\(statisticService.bestGame.date.dateTimeString)]\n" +
+                                    "Средняя точность: \(statisticService.totalAccuracy)\n"
+                                    
+                                    :
+                                        
+                                    "Ваш результат: \(currentAnswers) из \(questionAmount)\n" +
+                                    "Количество завершенных квизов: \(statisticService.gamesCount)\n" +
+                                    "Рекорд: \(statisticService.bestGame.correct) из \(statisticService.bestGame.total) [\(statisticService.bestGame.date.dateTimeString)]\n" +
+                                    "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%",
+                                    
+                                    buttonText: currentAnswers == questionAmount ? "Хотите повторить?" : "Сыграть еще разок?",
                                     completion: completion)
             
             alert?.show(quiz: result)
@@ -182,6 +200,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
             
             currentQuestionIndex += 1
             self.questionFactory?.requestNextQuestion()
+            
         }
     }
     

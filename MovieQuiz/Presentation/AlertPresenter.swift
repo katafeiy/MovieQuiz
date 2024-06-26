@@ -24,6 +24,12 @@ class AlertPresenter: AlertPresenterProtocol {
             
         }
         
+//        let reset = UIAlertAction(title: "Сбросить резальтаты?", style: .default) {_ in
+//            
+//            
+//            
+//        }
+        
         let cancel = UIAlertAction(title: "Выйти?", style: .default) { _ in
             
             exit(0)
