@@ -4,6 +4,7 @@ import UIKit
 
 class AlertPresenter: AlertPresenterProtocol {
     
+    private var resetAllValue = MovieQuizViewController()
     weak var delegate: AlertPresenterDelegate?
     
     func setDelegate(_ delegate: AlertPresenterDelegate) {
@@ -24,11 +25,11 @@ class AlertPresenter: AlertPresenterProtocol {
             
         }
         
-//        let reset = UIAlertAction(title: "Сбросить резальтаты?", style: .default) {_ in
-//            
-//            
-//            
-//        }
+        let reset = UIAlertAction(title: "Сбросить резальтаты?", style: .default) { _ in
+            
+            self.resetAllValue.reset()
+            
+        }
         
         let cancel = UIAlertAction(title: "Выйти?", style: .default) { _ in
             
@@ -38,6 +39,7 @@ class AlertPresenter: AlertPresenterProtocol {
         
         alert.addAction(action)
         alert.addAction(cancel)
+        alert.addAction(reset)
         
         delegate?.presentAlert(viewController: alert)
         

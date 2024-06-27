@@ -2,6 +2,7 @@ import Foundation
 
 final class StatisticService: StatisticServiceProtocol {
     
+//    private let countQuestion = QuestionFactory()
     private let storage: UserDefaults = .standard
     
     private enum Keys: String {
@@ -10,9 +11,8 @@ final class StatisticService: StatisticServiceProtocol {
         case bestGameTotal
         case bestGameDate
         case totalAccuracy
+        case countCorrect
     }
-    
-    
     
     var gamesCount: Int {
         get {
@@ -24,6 +24,7 @@ final class StatisticService: StatisticServiceProtocol {
             storage.set(newGamesCount, forKey: Keys.gamesCount.rawValue)
         }
     }
+    
     var bestGame: GameResult {
         get {
             let correctOld = storage.integer(forKey: Keys.bestGameCorrect.rawValue)
@@ -40,18 +41,16 @@ final class StatisticService: StatisticServiceProtocol {
             
         }
     }
+    
     var totalAccuracy: Double {
         
         get {
             
             storage.double(forKey: Keys.totalAccuracy.rawValue)
             
-            let correct = storage.integer(forKey: Keys.bestGameCorrect.rawValue)
-            let gamesCount = storage.integer(forKey: Keys.gamesCount.rawValue)
-            
             if Double(gamesCount) != 0 {
                 
-                return (Double(correct) / (10 * Double(gamesCount))) * 100.00
+                return (Double(countCorrect) / (10 * Double(gamesCount))) * 100.00
                 
             } else {
                 
@@ -66,16 +65,24 @@ final class StatisticService: StatisticServiceProtocol {
         }
     }
     
+    var countCorrect: Int {
+        get {
+            storage.integer(forKey: Keys.countCorrect.rawValue)
+        }
+        set {
+            storage.set(newValue, forKey: Keys.countCorrect.rawValue)
+        }
+    }
+    
+    
     func saveResult(correct count: Int, total amount: Int) {
         
-        var oldBestGame = bestGame
         let newBestGame = GameResult(correct: count, total: amount, date: Date())
         
-        if oldBestGame.bestRecord(newBestGame) { oldBestGame = newBestGame }
+        if bestGame.bestRecord(newBestGame) { bestGame = newBestGame }
         
         gamesCount += 1
-        bestGame.correct += count
-        bestGame.total += amount
+        countCorrect += count
 
     }
 }

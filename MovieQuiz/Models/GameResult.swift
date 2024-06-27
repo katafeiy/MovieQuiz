@@ -7,6 +7,6 @@ struct GameResult  {
     let date: Date // дата завершения раунда
     
     func bestRecord(_ record: GameResult) -> Bool {
-        correct > record.correct
+        correct < record.correct
     }
 }

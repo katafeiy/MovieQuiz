@@ -22,7 +22,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+         
         let statisticService = StatisticService()
         
         let questionFactory = QuestionFactory()
@@ -214,6 +214,16 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         
         pressButtonYes.isEnabled = isEnable
         pressButtonNo.isEnabled = isEnable
+        
+    }
+    
+    func reset() {
+        
+        let allValue = UserDefaults.standard.dictionaryRepresentation()
+        
+        for (key, _) in allValue {
+            UserDefaults.standard.removeObject(forKey: key)
+        }
         
     }
     
