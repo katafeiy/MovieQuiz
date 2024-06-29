@@ -44,9 +44,9 @@ final class AlertPresenter: AlertPresenterProtocol {
                 self.resetAllValue.reset()
                 
                 let statisticReset = AlertModel(title: "Сессия сброшена!",
-                                       message: "Хотите начать заново?",
-                                       buttonText: result.buttonText,
-                                       completion: result.completion)
+                                                message: "Хотите начать заново?",
+                                                buttonText: result.buttonText,
+                                                completion: result.completion)
                 
                 self.show(quiz: statisticReset, isShowRestart: false)
                 
