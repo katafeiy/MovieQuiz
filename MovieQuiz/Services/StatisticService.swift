@@ -2,7 +2,7 @@ import Foundation
 
 final class StatisticService: StatisticServiceProtocol {
     
-//    private let countQuestion = QuestionFactory()
+
     private let storage: UserDefaults = .standard
     
     private enum Keys: String {
@@ -73,7 +73,6 @@ final class StatisticService: StatisticServiceProtocol {
             storage.set(newValue, forKey: Keys.countCorrect.rawValue)
         }
     }
-    
     
     func saveResult(correct count: Int, total amount: Int) {
         

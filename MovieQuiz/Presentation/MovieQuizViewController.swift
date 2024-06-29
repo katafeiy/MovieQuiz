@@ -3,7 +3,7 @@ import UIKit
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, AlertPresenterDelegate {
     
     // MARK: - Lifecycle
-
+    
     @IBOutlet private weak var pressButtonYes: UIButton!
     @IBOutlet private weak var pressButtonNo: UIButton!
     @IBOutlet private weak var questionsTitleLabel: UILabel!
@@ -17,12 +17,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     private var questionFactory: QuestionFactoryProtocol?
     private var currentQuestion: QuizQuestion?
     private var alert: AlertPresenterProtocol?
-    private var statisticService: StatisticServiceProtocol = StatisticService()
+    private var statisticService: StatisticServiceProtocol?
     
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
-         
+        
         let statisticService = StatisticService()
         
         let questionFactory = QuestionFactory()
@@ -31,12 +32,14 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         alert.setDelegate(self)
         questionFactory.setDelegate(self)
         
+        self.statisticService = statisticService
         self.questionFactory = questionFactory
         self.alert = alert
         
         setupFonts()
         setupUI()
         questionFactory.requestNextQuestion()
+        
     }
     
     // функция установки заданных шрифтов
@@ -174,27 +177,28 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         
         if currentQuestionIndex == questionAmount - 1 {
             
+            guard let statisticService = statisticService else { return }
+            
             statisticService.saveResult(correct: currentAnswers, total: questionAmount)
             
-            let result = AlertModel(title: "Раунд окончен!!!",
-                                    message: currentAnswers == questionAmount ? 
-                                    
-                                    "Отличный результат: \(currentAnswers) из \(questionAmount)!" +
-                                    "Количество завершенных квизов: \(statisticService.gamesCount)\n" +
-                                    "Рекорд: \(statisticService.bestGame.correct) из \(statisticService.bestGame.total) [\(statisticService.bestGame.date.dateTimeString)]\n" +
-                                    "Средняя точность: \(statisticService.totalAccuracy)\n"
-                                    
-                                    :
-                                        
-                                    "Ваш результат: \(currentAnswers) из \(questionAmount)\n" +
-                                    "Количество завершенных квизов: \(statisticService.gamesCount)\n" +
-                                    "Рекорд: \(statisticService.bestGame.correct) из \(statisticService.bestGame.total) [\(statisticService.bestGame.date.dateTimeString)]\n" +
-                                    "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%",
-                                    
-                                    buttonText: currentAnswers == questionAmount ? "Хотите повторить?" : "Сыграть еще разок?",
-                                    completion: completion)
+            let result = currentAnswers  == questionAmount ? "Отличный результат" : "Ваш результат"
             
-            alert?.show(quiz: result)
+            let message = result + ": \(currentAnswers) из \(questionAmount)!\n" +
+            "Количество завершенных квизов: \(statisticService.gamesCount)\n" +
+            "Рекорд: \(statisticService.bestGame.correct) из \(statisticService.bestGame.total) [\(statisticService.bestGame.date.dateTimeString)]\n" +
+            "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%\n"
+            
+            let alertModel = AlertModel(title: "Раунд окончен!!!",
+                                        
+                                        message: message,
+                                        
+                                        buttonText: currentAnswers == questionAmount ? "Хотите повторить?" : "Сыграть еще разок?",
+                                        
+                                        completion: completion)
+            
+            let isShowRestart = statisticService.gamesCount > 1
+            
+            alert?.show(quiz: alertModel, isShowRestart: isShowRestart)
             
         } else {
             
@@ -204,8 +208,12 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         }
     }
     
+    // функция вывода алерта
+    
     func presentAlert(viewController: UIViewController) {
+        
         present(viewController, animated: true, completion: nil)
+        
     }
     
     // функция блокировки кнопок
@@ -217,12 +225,15 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         
     }
     
+    // функция очистки UserDefault
+    
     func reset() {
         
         let allValue = UserDefaults.standard.dictionaryRepresentation()
         
         for (key, _) in allValue {
             UserDefaults.standard.removeObject(forKey: key)
+            
         }
         
     }

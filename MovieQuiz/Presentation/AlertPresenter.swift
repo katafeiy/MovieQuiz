@@ -2,16 +2,19 @@ import UIKit
 
 // функция выбора повторной игры или выхода их приложения
 
-class AlertPresenter: AlertPresenterProtocol {
+final class AlertPresenter: AlertPresenterProtocol {
     
     private var resetAllValue = MovieQuizViewController()
+    
     weak var delegate: AlertPresenterDelegate?
     
     func setDelegate(_ delegate: AlertPresenterDelegate) {
+        
         self.delegate = delegate
+        
     }
     
-    func show(quiz result: AlertModel) {
+    func show(quiz result: AlertModel, isShowRestart: Bool) {
         
         let alert = UIAlertController(title: result.title,
                                       message: result.message,
@@ -25,13 +28,7 @@ class AlertPresenter: AlertPresenterProtocol {
             
         }
         
-        let reset = UIAlertAction(title: "Сбросить резальтаты?", style: .default) { _ in
-            
-            self.resetAllValue.reset()
-            
-        }
-        
-        let cancel = UIAlertAction(title: "Выйти?", style: .default) { _ in
+        let cancel = UIAlertAction(title: "Выйти?", style: .cancel) { _ in
             
             exit(0)
             
@@ -39,7 +36,19 @@ class AlertPresenter: AlertPresenterProtocol {
         
         alert.addAction(action)
         alert.addAction(cancel)
-        alert.addAction(reset)
+        
+        if isShowRestart {
+            
+            let reset = UIAlertAction(title: "Сбросить сессию?", style: .destructive) { _ in
+                
+                self.resetAllValue.reset()
+                self.show(quiz: result, isShowRestart: false)
+                
+            }
+            
+            alert.addAction(reset)
+        }
+        
         
         delegate?.presentAlert(viewController: alert)
         

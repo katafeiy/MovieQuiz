@@ -8,5 +8,6 @@ protocol StatisticServiceProtocol {
     
     func saveResult(correct count: Int, total amount: Int)
     
+    
 }
 
