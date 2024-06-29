@@ -42,13 +42,18 @@ final class AlertPresenter: AlertPresenterProtocol {
             let reset = UIAlertAction(title: "Сбросить сессию?", style: .destructive) { _ in
                 
                 self.resetAllValue.reset()
-                self.show(quiz: result, isShowRestart: false)
+                
+                let statisticReset = AlertModel(title: "Сесия сброшена!",
+                                       message: "Хотите начать заново?",
+                                       buttonText: result.buttonText,
+                                       completion: result.completion)
+                
+                self.show(quiz: statisticReset, isShowRestart: false)
                 
             }
             
             alert.addAction(reset)
         }
-        
         
         delegate?.presentAlert(viewController: alert)
         

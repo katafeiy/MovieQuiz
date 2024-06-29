@@ -231,10 +231,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         
         let allValue = UserDefaults.standard.dictionaryRepresentation()
         
-        for (key, _) in allValue {
-            UserDefaults.standard.removeObject(forKey: key)
-            
-        }
+        allValue.forEach { UserDefaults.standard.removeObject(forKey: $0.key) }
         
     }
     
