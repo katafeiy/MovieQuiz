@@ -25,7 +25,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         super.viewDidLoad()
         
         let statisticService = StatisticService()
-        
         let questionFactory = QuestionFactory()
         let alert = AlertPresenter()
         
