@@ -66,12 +66,14 @@ final class StatisticService: StatisticServiceProtocol {
     }
     
     var countCorrect: Int {
+        
         get {
             storage.integer(forKey: Keys.countCorrect.rawValue)
         }
         set {
             storage.set(newValue, forKey: Keys.countCorrect.rawValue)
         }
+        
     }
     
     func saveResult(correct count: Int, total amount: Int) {
