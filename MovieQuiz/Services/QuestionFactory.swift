@@ -10,16 +10,36 @@ final class QuestionFactory: QuestionFactoryProtocol {
     
     init() {
         
-        let theGodfather = QuizQuestion(image: "The Godfather", text: "Рейтинг этого фильма больше чем 9.1 ?", correctAnswer: true)
-        let theDarkKnight = QuizQuestion(image: "The Dark Knight", text: "Рейтинг этого фильма больше чем 8.7 ?", correctAnswer: true)
-        let killBill = QuizQuestion(image: "Kill Bill", text: "Рейтинг этого фильма больше чем 7.7 ?", correctAnswer: true)
-        let theAvengers =  QuizQuestion(image: "The Avengers", text: "Рейтинг этого фильма больше чем 7.5 ?", correctAnswer: true)
-        let deadpool = QuizQuestion(image: "Deadpool", text: "Рейтинг этого фильма больше чем 6.8 ?", correctAnswer: true)
-        let theGreenKnight = QuizQuestion(image: "The Green Knight", text: "Рейтинг этого фильма больше чем 6.5 ?", correctAnswer: true)
-        let theOld = QuizQuestion(image: "Old", text: "Рейтинг этого фильма больше чем 5.9 ?", correctAnswer: false)
-        let theIceAgeAdventuresOfBuckWild = QuizQuestion(image: "The Ice Age Adventures of Buck Wild", text: "Рейтинг этого фильма больше чем 5.6 ?", correctAnswer: false)
-        let tesla = QuizQuestion(image: "Tesla", text: "Рейтинг этого фильма больше чем 5.5 ?", correctAnswer: false)
-        let vivarium = QuizQuestion(image: "Vivarium", text: "Рейтинг этого фильма больше чем 6.2 ?", correctAnswer: false)
+        let theGodfather = QuizQuestion(image: "The Godfather", 
+                                        text: "Рейтинг этого фильма больше чем 9.1 ?",
+                                        correctAnswer: true)
+        let theDarkKnight = QuizQuestion(image: "The Dark Knight", 
+                                         text: "Рейтинг этого фильма больше чем 8.7 ?",
+                                         correctAnswer: true)
+        let killBill = QuizQuestion(image: "Kill Bill", 
+                                    text: "Рейтинг этого фильма больше чем 7.7 ?", 
+                                    correctAnswer: true)
+        let theAvengers =  QuizQuestion(image: "The Avengers",
+                                        text: "Рейтинг этого фильма больше чем 7.5 ?",
+                                        correctAnswer: true)
+        let deadpool = QuizQuestion(image: "Deadpool", 
+                                    text: "Рейтинг этого фильма больше чем 6.8 ?",
+                                    correctAnswer: true)
+        let theGreenKnight = QuizQuestion(image: "The Green Knight", 
+                                          text: "Рейтинг этого фильма больше чем 6.5 ?",
+                                          correctAnswer: true)
+        let theOld = QuizQuestion(image: "Old", 
+                                  text: "Рейтинг этого фильма больше чем 5.9 ?",
+                                  correctAnswer: false)
+        let theIceAgeAdventuresOfBuckWild = QuizQuestion(image: "The Ice Age Adventures of Buck Wild", 
+                                                         text: "Рейтинг этого фильма больше чем 5.6 ?",
+                                                         correctAnswer: false)
+        let tesla = QuizQuestion(image: "Tesla", 
+                                 text: "Рейтинг этого фильма больше чем 5.5 ?",
+                                 correctAnswer: false)
+        let vivarium = QuizQuestion(image: "Vivarium", 
+                                    text: "Рейтинг этого фильма больше чем 6.2 ?",
+                                    correctAnswer: false)
         
         
         questions = [
