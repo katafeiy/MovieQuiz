@@ -28,7 +28,7 @@ final class AlertPresenter: AlertPresenterProtocol {
             
         }
         
-        let cancel = UIAlertAction(title: "Выйти?", style: .cancel) { _ in
+        let cancel = UIAlertAction(title: "Выйти", style: .cancel) { _ in
             
             exit(0)
             
@@ -39,13 +39,13 @@ final class AlertPresenter: AlertPresenterProtocol {
         
         if isShowRestart {
             
-            let reset = UIAlertAction(title: "Сбросить сессию?", style: .destructive) { _ in
+            let reset = UIAlertAction(title: "Сбросить сессию", style: .destructive) { _ in
                 
                 self.resetAllValue.reset()
                 
-                let statisticReset = AlertModel(title: "Сессия сброшена!",
+                let statisticReset = AlertModel(title: "Сессия сброшена!" + "\n",
                                                 message: "Хотите начать заново?",
-                                                buttonText: result.buttonText,
+                                                buttonText: "Да",
                                                 completion: result.completion)
                 
                 self.show(quiz: statisticReset, isShowRestart: false)
