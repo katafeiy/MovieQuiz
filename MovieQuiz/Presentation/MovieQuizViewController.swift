@@ -4,6 +4,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     
     // MARK: - Lifecycle
     
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet private weak var pressButtonYes: UIButton!
     @IBOutlet private weak var pressButtonNo: UIButton!
     @IBOutlet private weak var questionsTitleLabel: UILabel!
@@ -19,13 +20,12 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     private var alert: AlertPresenterProtocol?
     private var statisticService: StatisticServiceProtocol?
     
-    
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
         let statisticService = StatisticService()
-        let questionFactory = QuestionFactory()
+        let questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         let alert = AlertPresenter()
         
         alert.setDelegate(self)
@@ -37,7 +37,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         
         setupFonts()
         setupUI()
-        questionFactory.requestNextQuestion()
+        showLoadIndicator()
+        
+        questionFactory.loadData()
         
     }
     
@@ -84,9 +86,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         currentQuestionIndex = 0
         currentAnswers = 0
         
-        questionFactory = QuestionFactory()
-        questionFactory?.setDelegate(self)
-        
         questionFactory?.requestNextQuestion()
         
     }
@@ -130,10 +129,11 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         
-        let questionStep = QuizStepViewModel(image: UIImage(named: model.image) ?? UIImage.init(),
+        let questionStep = QuizStepViewModel(image: UIImage(data: model.image) ?? UIImage(),
                                              question: model.text,
                                              questionNumber: "\(currentQuestionIndex + 1)/\(questionAmount)")
         return questionStep
+        
     }
     
     // функция вывода на экран вопроса
@@ -189,12 +189,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
             "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%\n" + "\n" + question
             
             
-            let alertModel = AlertModel(title: "Раунд окончен!",
-                                        
+            let alertModel = AlertModel(title: "Раунд окончен!\n",
                                         message: message,
-                                        
                                         buttonText: "Да",
-                                        
                                         completion: completion)
             
             let isShowRestart = statisticService.gamesCount > 1
@@ -217,6 +214,22 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         
     }
     
+    // функция отображения индикатора загрузки
+    
+    private func showLoadIndicator() {
+        
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
+        
+    }
+    
+    private func hideLoadingIndicator() {
+        
+        activityIndicator.isHidden = true
+        activityIndicator.stopAnimating()
+        
+    }
+    
     // функция блокировки кнопок
     
     private func blockingButtonPresses(isEnable: Bool) {
@@ -233,6 +246,45 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         let allValue = UserDefaults.standard.dictionaryRepresentation()
         
         allValue.forEach { UserDefaults.standard.removeObject(forKey: $0.key) }
+        
+    }
+    
+    // функция отображения ошибки при неудачной загрузки данных
+    
+    private func showNetworkError(message: String) {
+        
+        hideLoadingIndicator()
+        
+        let errorMessage = AlertModel(title: "Ошибка!",
+                                      message: message,
+                                      buttonText: "Попробовать еще раз...") { [ weak self ] in
+            
+            guard let self = self else { return }
+            
+            currentAnswers = 0
+            currentQuestionIndex = 0
+            
+            questionFactory?.requestNextQuestion()
+            
+        }
+        
+        alert?.show(quiz: errorMessage, isShowRestart: false)
+    }
+    
+    // функция сообщения об успешной загрузке данных
+    
+    func didLoadDataFromServer() {
+        
+        activityIndicator.isHidden = true
+        questionFactory?.requestNextQuestion()
+        
+    }
+    
+    // функция сообщения об ошибке загрузки данных
+    
+    func didFailToLoadData(with error: Error) {
+        
+        showNetworkError(message: error.localizedDescription)
         
     }
     
