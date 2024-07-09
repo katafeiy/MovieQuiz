@@ -1,6 +1,8 @@
 import Foundation
 
 final class QuestionFactory: QuestionFactoryProtocol {
+    var countElements: Int { return movies.count }
+    
     
     private var moviesLoader: MoviesLoading
     private weak var delegate: QuestionFactoryDelegate?
@@ -26,7 +28,7 @@ final class QuestionFactory: QuestionFactoryProtocol {
                     
                 case .success(let mostPopularMovies):
                     
-                    self.movies = mostPopularMovies.items
+                    self.movies = mostPopularMovies.items ?? []
                     self.delegate?.didLoadDataFromServer()
                     
                 case .failure(let error):
@@ -51,30 +53,16 @@ final class QuestionFactory: QuestionFactoryProtocol {
     
     func requestNextQuestion() {
         
-        DispatchQueue.global().async { [ weak self ] in
+        let index = (0..<self.movies.count).randomElement() ?? 0
+        
+        guard var movie = self.movies[safe: index] else { return }
+        
+        
+        func resultData(image: Data) {
             
-            guard let self = self else { return }
+            let rating = Float(movie.rating ?? "") ?? 0
             
-            let index = (0..<self.movies.count).randomElement() ?? 0
-            
-            guard let movie = self.movies[safe: index] else { return }
-            
-            var imageData = Data()
-            
-            do {
-                
-                imageData = try Data(contentsOf: movie.imageURL)
-                
-                
-            } catch {
-                
-                print("Filed to load image")
-                
-            }
-            
-            let rating = Float(movie.rating) ?? 0
-            
-            let element = Float.random(in: 1...9.9)
+            let element = Float.random(in: 4.5...9.9)
             
             let randomRating = Float(String(format: "%.1f", element)) ?? 0
             
@@ -82,7 +70,7 @@ final class QuestionFactory: QuestionFactoryProtocol {
             
             let correctAnswer = rating > randomRating
             
-            let question = QuizQuestion(image: imageData,
+            let question = QuizQuestion(image: image,
                                         text: text,
                                         correctAnswer: correctAnswer)
             
@@ -92,9 +80,39 @@ final class QuestionFactory: QuestionFactoryProtocol {
                 
                 self.delegate?.didReceiveNextQuestion(question: question)
                 
+                movie = movies.remove(at: index)
+                
+            }
+        }
+        
+        guard let url = movie.resizedImageURL else { return }
+        
+        let request = URLRequest(url: url, timeoutInterval: 2)
+        
+        URLSession.shared.dataTask(with: request) { data , response , error in
+            
+            if let error = error {
+                
+                DispatchQueue.main.async {
+                    
+                    self.delegate?.errorFromDownloadImage(with: error)
+                }
+                return
             }
             
-        }
+            if let data = data {
+                
+                resultData(image: data)
+                
+                return
+            }
+            
+            DispatchQueue.main.async {
+                resultData(image: Data())
+            }
+            
+        }.resume()
+        
             
     }
     

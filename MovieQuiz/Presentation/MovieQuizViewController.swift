@@ -86,6 +86,14 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         currentQuestionIndex = 0
         currentAnswers = 0
         
+        if (questionFactory?.countElements ?? 0 ) < 20 {
+            
+            questionFactory?.loadData()
+            
+            return
+            
+        }
+        
         questionFactory?.requestNextQuestion()
         
     }
@@ -156,7 +164,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         
         previewImage.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
         
-        blockingButtonPresses(isEnable: false)
+        blockingButtonPresses(isEnable: false) // ?
         
         if isCorrect == true {
             currentAnswers += 1
@@ -285,6 +293,24 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     func didFailToLoadData(with error: Error) {
         
         showNetworkError(message: error.localizedDescription)
+        
+    }
+    
+    func errorFromDownloadImage(with error: Error) {
+        
+        hideLoadingIndicator()
+        
+        let errorMessage = AlertModel(title: "Ошибка!",
+                                      message: error.localizedDescription,
+                                      buttonText: "Попробовать еще раз...") { [ weak self ] in
+            
+            guard let self = self else { return }
+            
+            self.questionFactory?.requestNextQuestion()
+            
+        }
+        
+        alert?.show(quiz: errorMessage, isShowRestart: false)
         
     }
     

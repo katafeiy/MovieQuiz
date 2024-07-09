@@ -7,5 +7,7 @@ protocol QuestionFactoryProtocol {
     func loadData()
     
     func setDelegate(_ delegate: QuestionFactoryDelegate)
+    
+    var countElements: Int { get }
         
 }
