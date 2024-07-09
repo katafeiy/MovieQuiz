@@ -43,13 +43,11 @@ final class QuestionFactory: QuestionFactoryProtocol {
         
     }
     
-    
     func setDelegate(_ delegate: QuestionFactoryDelegate) {
         
         self.delegate = delegate
         
     }
-    
     
     func requestNextQuestion() {
         
@@ -118,10 +116,6 @@ final class QuestionFactory: QuestionFactoryProtocol {
     }
     
 }
-
-
-
-
 
 // имитация входящих данных (mock-данные)
 

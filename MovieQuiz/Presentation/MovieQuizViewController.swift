@@ -1,8 +1,5 @@
 import UIKit
 
-
-
-
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, AlertPresenterDelegate {
     
     // MARK: - Lifecycle
@@ -168,7 +165,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         
         previewImage.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
         
-        blockingButtonPresses(isEnable: false) // ?
+        blockingButtonPresses(isEnable: false)
         
         if isCorrect == true {
             currentAnswers += 1
