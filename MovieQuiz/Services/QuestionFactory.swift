@@ -87,7 +87,7 @@ final class QuestionFactory: QuestionFactoryProtocol {
         
         guard let url = movie.resizedImageURL else { return }
         
-        let request = URLRequest(url: url, timeoutInterval: 2)
+        let request = URLRequest(url: url, timeoutInterval: 5)
         
         URLSession.shared.dataTask(with: request) { data , response , error in
             
@@ -108,12 +108,13 @@ final class QuestionFactory: QuestionFactoryProtocol {
             }
             
             DispatchQueue.main.async {
+                
                 resultData(image: Data())
+                
             }
             
         }.resume()
-        
-            
+                   
     }
     
 }

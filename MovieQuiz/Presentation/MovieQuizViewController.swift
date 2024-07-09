@@ -1,5 +1,8 @@
 import UIKit
 
+
+
+
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, AlertPresenterDelegate {
     
     // MARK: - Lifecycle
@@ -37,8 +40,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         
         setupFonts()
         setupUI()
-        showLoadIndicator()
         
+        showLoadingIndicator()
         questionFactory.loadData()
         
     }
@@ -86,6 +89,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         currentQuestionIndex = 0
         currentAnswers = 0
         
+        questionFactory?.requestNextQuestion()
+        
         if (questionFactory?.countElements ?? 0 ) < 20 {
             
             questionFactory?.loadData()
@@ -94,8 +99,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
             
         }
         
-        questionFactory?.requestNextQuestion()
-        
+    
     }
     
     // MARK: - QuestionFactoryDelegate
@@ -224,7 +228,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     
     // функция отображения индикатора загрузки
     
-    private func showLoadIndicator() {
+    private func showLoadingIndicator() {
         
         activityIndicator.isHidden = false
         activityIndicator.startAnimating()
@@ -272,7 +276,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
             currentAnswers = 0
             currentQuestionIndex = 0
             
-            questionFactory?.requestNextQuestion()
+            questionFactory?.loadData()
             
         }
         
@@ -294,7 +298,23 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         
         showNetworkError(message: error.localizedDescription)
         
+//        hideLoadingIndicator()
+//        
+//        let errorMessage = AlertModel(title: "Ошибка!",
+//                                      message: error.localizedDescription,
+//                                      buttonText: "Попробовать еще раз...") { [ weak self ] in
+//            
+//            guard let self = self else { return }
+//            
+//            questionFactory?.loadData()
+//            
+//        }
+//        
+//        alert?.show(quiz: errorMessage, isShowRestart: false)
+        
     }
+    
+    // функция отображения ошибки при неудачной загрузки картинки
     
     func errorFromDownloadImage(with error: Error) {
         
