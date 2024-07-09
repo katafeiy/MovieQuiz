@@ -297,21 +297,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     func didFailToLoadData(with error: Error) {
         
         showNetworkError(message: error.localizedDescription)
-        
-//        hideLoadingIndicator()
-//        
-//        let errorMessage = AlertModel(title: "Ошибка!",
-//                                      message: error.localizedDescription,
-//                                      buttonText: "Попробовать еще раз...") { [ weak self ] in
-//            
-//            guard let self = self else { return }
-//            
-//            questionFactory?.loadData()
-//            
-//        }
-//        
-//        alert?.show(quiz: errorMessage, isShowRestart: false)
-        
+                
     }
     
     // функция отображения ошибки при неудачной загрузки картинки
