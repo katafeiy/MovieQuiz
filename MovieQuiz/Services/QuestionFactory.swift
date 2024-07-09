@@ -21,9 +21,9 @@ final class QuestionFactory: QuestionFactoryProtocol {
         moviesLoader.loadMovies { [ weak self ] result in
             
             DispatchQueue.main.async {
-            
-            guard let self = self else { return }
-            
+                
+                guard let self = self else { return }
+                
                 switch result {
                     
                 case .success(let mostPopularMovies):
@@ -85,9 +85,9 @@ final class QuestionFactory: QuestionFactoryProtocol {
         
         guard let url = movie.resizedImageURL else { return }
         
-        let request = URLRequest(url: url, timeoutInterval: 3)
+        let request = URLRequest(url: url, timeoutInterval: 1)
         
-        URLSession.shared.dataTask(with: request) { data , response , error in
+        let task = URLSession.shared.dataTask(with: request) { data , response , error in
             
             if let error = error {
                 
@@ -111,8 +111,9 @@ final class QuestionFactory: QuestionFactoryProtocol {
                 
             }
             
-        }.resume()
-                   
+        }
+        
+        task.resume()        
     }
     
 }
@@ -173,20 +174,20 @@ final class QuestionFactory: QuestionFactoryProtocol {
 //    }
 
 //func requestNextQuestion() {
-//    
+//
 //    guard let index = (0..<questions.count).randomElement() else {
-//        
+//
 //        delegate?.didReceiveNextQuestion(question: nil)
-//        
+//
 //        return
 //    }
-//    
+//
 //    var question = questions[safe: index]
-//    
+//
 //    delegate?.didReceiveNextQuestion(question: question)
-//    
+//
 //    question = questions.remove(at: index)
-//    
+//
 //    return
 //}
 
