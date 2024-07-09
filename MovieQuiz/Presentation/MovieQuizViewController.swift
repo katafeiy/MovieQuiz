@@ -264,7 +264,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         
         hideLoadingIndicator()
         
-        let errorMessage = AlertModel(title: "Ошибка!",
+        let errorMessage = AlertModel(title: "Ошибка!\n",
                                       message: message,
                                       buttonText: "Попробовать еще раз...") { [ weak self ] in
             
@@ -303,7 +303,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         
         hideLoadingIndicator()
         
-        let errorMessage = AlertModel(title: "Ошибка!",
+        let errorMessage = AlertModel(title: "Ошибка!\n",
                                       message: error.localizedDescription,
                                       buttonText: "Попробовать еще раз...") { [ weak self ] in
             
