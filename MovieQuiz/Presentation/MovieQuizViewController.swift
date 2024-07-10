@@ -83,20 +83,14 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     
     func completion() -> () {
         
+        guard let questionFactory else { return }
         currentQuestionIndex = 0
         currentAnswers = 0
+        questionFactory.requestNextQuestion()
         
-        questionFactory?.requestNextQuestion()
-        
-        if (questionFactory?.countElements ?? 0 ) < 20 {
-            
-            questionFactory?.loadData()
-            
-            return
-            
+        if questionFactory.countElements < 20 {
+            questionFactory.loadData()
         }
-        
-    
     }
     
     // MARK: - QuestionFactoryDelegate

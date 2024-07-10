@@ -118,8 +118,8 @@ final class QuestionFactory: QuestionFactoryProtocol {
     
 }
 
-// имитация входящих данных (mock-данные)
 
+// имитация входящих данных (mock-данные)
 //    private var questions: [QuizQuestion]
 //
 //    init() {
@@ -172,25 +172,6 @@ final class QuestionFactory: QuestionFactoryProtocol {
 //        // Массив был создан именно в таком виде для наглядности, а также для тренировки написания кода, так как данный проект является учебным)))
 //        // Можно было бы сократить код внося данные сразу в массив без создания переменных
 //    }
-
-//func requestNextQuestion() {
-//
-//    guard let index = (0..<questions.count).randomElement() else {
-//
-//        delegate?.didReceiveNextQuestion(question: nil)
-//
-//        return
-//    }
-//
-//    var question = questions[safe: index]
-//
-//    delegate?.didReceiveNextQuestion(question: question)
-//
-//    question = questions.remove(at: index)
-//
-//    return
-//}
-
 
 /*
  Mock-данные
