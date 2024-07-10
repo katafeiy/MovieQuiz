@@ -87,6 +87,10 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="hhn-8h-Kob">
+                                <rect key="frame" x="185" y="412" width="20" height="20"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" name="YP Black"/>
@@ -98,6 +102,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="hhn-8h-Kob" id="SGI-ln-RQp"/>
                         <outlet property="counterLabel" destination="F1f-g9-xIH" id="hcH-nM-hlA"/>
                         <outlet property="pressButtonNo" destination="T0i-3U-obX" id="ryv-UB-Quo"/>
                         <outlet property="pressButtonYes" destination="9ul-25-Iw5" id="eW3-Jk-gTI"/>
@@ -108,7 +113,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1483" y="223"/>
+            <point key="canvasLocation" x="-1598" y="-263"/>
         </scene>
     </scenes>
     <resources>
