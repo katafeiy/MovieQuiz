@@ -76,7 +76,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         pressButtonNo.layer.cornerRadius = 15
         pressButtonNo.setImage(UIImage(systemName: "hand.raised"), for: .normal)
         pressButtonNo.tintColor = .ypRed
-        
+                
     }
     
     // MARK: - AlertPresenter

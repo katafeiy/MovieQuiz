@@ -20,6 +20,8 @@ final class AlertPresenter: AlertPresenterProtocol {
                                       message: result.message,
                                       preferredStyle: .alert)
         
+        alert.view.accessibilityIdentifier = "quizAlert"
+        
         let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in
             
             guard let _ = self else { return }
@@ -56,7 +58,5 @@ final class AlertPresenter: AlertPresenterProtocol {
         }
         
         delegate?.presentAlert(viewController: alert)
-        
     }
-    
 }
