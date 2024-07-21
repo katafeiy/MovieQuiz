@@ -12,13 +12,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     @IBOutlet private weak var questionLabel: UILabel!
     @IBOutlet private weak var previewImage: UIImageView!
     
+    
     private var currentAnswers = 0
-    private var currentQuestionIndex = 0
-    private let questionAmount: Int = 10
     private var questionFactory: QuestionFactoryProtocol?
     private var currentQuestion: QuizQuestion?
     private var alert: AlertPresenterProtocol?
     private var statisticService: StatisticServiceProtocol?
+    private var presenter = MovieQuizPresenter()
     
     override func viewDidLoad() {
         
@@ -84,7 +84,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     func completion() -> () {
         
         guard let questionFactory else { return }
-        currentQuestionIndex = 0
+        presenter.resetQuestionIndex()
         currentAnswers = 0
         questionFactory.requestNextQuestion()
         
@@ -100,7 +100,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         guard let question = question else { return }
         
         currentQuestion = question
-        let viewModel = convert(model: question)
+        let viewModel = presenter.convert(model: question)
         
         DispatchQueue.main.async { [weak self] in
             self?.show(quiz: viewModel)
@@ -128,16 +128,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     // MARK: - Private function
     
     
-    // функция конвертации
     
-    private func convert(model: QuizQuestion) -> QuizStepViewModel {
-        
-        let questionStep = QuizStepViewModel(image: UIImage(data: model.image) ?? UIImage(),
-                                             question: model.text,
-                                             questionNumber: "\(currentQuestionIndex + 1)/\(questionAmount)")
-        return questionStep
-        
-    }
     
     // функция вывода на экран вопроса
     
@@ -177,16 +168,16 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     
     private func showNextQuestionOrResults() {
         
-        if currentQuestionIndex == questionAmount - 1 {
+        if presenter.isLastQuestion() {
             
             guard let statisticService = statisticService else { return }
             
-            statisticService.saveResult(correct: currentAnswers, total: questionAmount)
+            statisticService.saveResult(correct: currentAnswers, total: presenter.questionAmount)
             
-            let result = currentAnswers  == questionAmount ? "Отличный результат" : "Ваш результат"
-            let question = currentAnswers == questionAmount ? "Хотите повторить?" : "Сыграть еще разок?"
+            let result = currentAnswers  == presenter.questionAmount ? "Отличный результат" : "Ваш результат"
+            let question = currentAnswers == presenter.questionAmount ? "Хотите повторить?" : "Сыграть еще разок?"
             
-            let message = result + ": \(currentAnswers) из \(questionAmount)!\n" +
+            let message = result + ": \(currentAnswers) из \(presenter.questionAmount)!\n" +
             "Количество завершенных квизов: \(statisticService.gamesCount)\n" +
             "Рекорд: \(statisticService.bestGame.correct) из \(statisticService.bestGame.total) [\(statisticService.bestGame.date.dateTimeString)]\n" +
             "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%\n" + "\n" + question
@@ -203,7 +194,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
             
         } else {
             
-            currentQuestionIndex += 1
+            presenter.switchToNextQuestion()
             self.questionFactory?.requestNextQuestion()
             
         }
@@ -265,7 +256,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
             guard let self = self else { return }
             
             currentAnswers = 0
-            currentQuestionIndex = 0
+            presenter.resetQuestionIndex()
             
             questionFactory?.loadData()
             
