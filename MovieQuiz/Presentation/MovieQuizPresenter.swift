@@ -16,12 +16,19 @@ final class MovieQuizPresenter {
         currentQuestionIndex == questionAmount - 1
     }
     
-    func resetQuestionIndex() {
+    func restartGame() {
+        correctAnswers = 0
         currentQuestionIndex = 0
     }
     
     func switchToNextQuestion() {
         currentQuestionIndex += 1
+    }
+    
+    func didAnswer(is CorrectAnswer: Bool) {
+        
+         correctAnswers += 1
+        
     }
     
     // функция конвертации
