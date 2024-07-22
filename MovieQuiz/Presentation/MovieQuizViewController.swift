@@ -13,9 +13,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     @IBOutlet private weak var previewImage: UIImageView!
     
     private var questionFactory: QuestionFactoryProtocol?
-    private var alert: AlertPresenterProtocol?
     private var statisticService: StatisticServiceProtocol?
     private var presenter = MovieQuizPresenter()
+    var alert: AlertPresenterProtocol?
     
     override func viewDidLoad() {
         
@@ -84,7 +84,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         
         guard let questionFactory else { return }
         presenter.restartGame()
-        
         questionFactory.requestNextQuestion()
         
         if questionFactory.countElements < 20 {
@@ -136,11 +135,11 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         
         blockingButtonPresses(isEnable: false)
         
-        presenter.didAnswer(is: isCorrect)
+        presenter.didAnswer(isCorrectAnswer: isCorrect)
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             guard let self = self else { return }
-            
+           
             self.presenter.questionFactory = self.questionFactory
             self.presenter.showNextQuestionOrResults()
             previewImage.layer.borderColor = UIColor.clear.cgColor
@@ -203,9 +202,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
             
             guard let self = self else { return }
             
-            correctAnswers = 0
-            presenter.resetQuestionIndex()
-            
+            presenter.restartGame()
             questionFactory?.loadData()
             
         }

@@ -1,34 +1,29 @@
 import UIKit
 
-final class MovieQuizPresenter {
+final class MovieQuizPresenter: UIViewController {
     
     var currentQuestion: QuizQuestion?
     var questionFactory: QuestionFactoryProtocol?
     var statisticService: StatisticServiceProtocol?
-    var alert: AlertPresenterProtocol?
     weak var viewController: MovieQuizViewController?
     
     var correctAnswers = 0
     let questionAmount: Int = 10
     private var currentQuestionIndex = 0
     
-    func isLastQuestion() -> Bool {
-        currentQuestionIndex == questionAmount - 1
-    }
+    func isLastQuestion() -> Bool { currentQuestionIndex == questionAmount - 1 }
     
     func restartGame() {
         correctAnswers = 0
         currentQuestionIndex = 0
     }
     
-    func switchToNextQuestion() {
-        currentQuestionIndex += 1
-    }
+    func switchToNextQuestion() { currentQuestionIndex += 1 }
     
-    func didAnswer(is CorrectAnswer: Bool) {
-        
-         correctAnswers += 1
-        
+    func didAnswer(isCorrectAnswer: Bool) {
+        if isCorrectAnswer == true {
+             self.correctAnswers += 1
+        }
     }
     
     // функция конвертации
@@ -41,26 +36,17 @@ final class MovieQuizPresenter {
         return questionStep
         
     }
+        
+    func pressButtonYes() { didAnswer(isYes: true) }
     
-    
-    func pressButtonYes() {
-        
-        didAnswer(isYes: true)
-        
-    }
-    
-    func pressButtonNo() {
-        
-        didAnswer(isYes: false)
-        
-    }
+    func pressButtonNo() { didAnswer(isYes: false) }
     
     private func didAnswer(isYes: Bool) {
         
         let answer = isYes
         guard let currentQuestion = currentQuestion else { return }
         viewController?.showAnswerResult(isCorrect: answer == currentQuestion.correctAnswer)
-    
+        
     }
     
     // MARK: - QuestionFactoryDelegate
@@ -83,15 +69,16 @@ final class MovieQuizPresenter {
         
         if self.isLastQuestion() {
             
+            statisticService = StatisticService()
+            
             guard let statisticService = statisticService, let viewController = viewController else { return }
             
+            statisticService.saveResult(correct: correctAnswers, total: questionAmount)
             
-            statisticService.saveResult(correct: correctAnswers, total: self.questionAmount)
+            let result = correctAnswers  == questionAmount ? "Отличный результат" : "Ваш результат"
+            let question = correctAnswers == questionAmount ? "Хотите повторить?" : "Сыграть еще разок?"
             
-            let result = correctAnswers  == self.questionAmount ? "Отличный результат" : "Ваш результат"
-            let question = correctAnswers == self.questionAmount ? "Хотите повторить?" : "Сыграть еще разок?"
-            
-            let message = result + ": \(correctAnswers) из \(self.questionAmount)!\n" +
+            let message = result + ": \(correctAnswers) из \(questionAmount)!\n" +
             "Количество завершенных квизов: \(statisticService.gamesCount)\n" +
             "Рекорд: \(statisticService.bestGame.correct) из \(statisticService.bestGame.total) [\(statisticService.bestGame.date.dateTimeString)]\n" +
             "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%\n" + "\n" + question
@@ -104,7 +91,7 @@ final class MovieQuizPresenter {
             
             let isShowRestart = statisticService.gamesCount > 1
             
-            alert?.show(quiz: alertModel, isShowRestart: isShowRestart)
+            viewController.alert?.show(quiz: alertModel, isShowRestart: isShowRestart)
             
         } else {
             
