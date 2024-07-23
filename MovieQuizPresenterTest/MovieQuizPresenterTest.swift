@@ -4,6 +4,10 @@ import XCTest
 
 final class MovieQuizViewControllerMock: MovieQuizViewControllerProtocol {
     
+    func show(quiz step: QuizStepViewModel) {
+        
+    }
+    
     func showLoadingIndicator() {
         
     }
