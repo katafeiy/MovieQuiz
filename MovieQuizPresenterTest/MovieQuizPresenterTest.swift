@@ -2,31 +2,7 @@ import XCTest
 
 @testable import MovieQuiz
 
-protocol MovieQuizViewControllerProtocol: AnyObject {
-    func show(quiz step: QuizStepViewModel)
-    func show(quiz result: AlertModel)
-    
-    func highlightImageBorder(isCorrectAnswer: Bool)
-    
-    func showLoadingIndicator()
-    func hideLoadingIndicator()
-    
-    func showNetworkError(message: String)
-}
-
 final class MovieQuizViewControllerMock: MovieQuizViewControllerProtocol {
-    
-    func show(quiz step: QuizStepViewModel) {
-        
-    }
-    
-    func show(quiz result: AlertModel) {
-        
-    }
-    
-    func highlightImageBorder(isCorrectAnswer: Bool) {
-        
-    }
     
     func showLoadingIndicator() {
         

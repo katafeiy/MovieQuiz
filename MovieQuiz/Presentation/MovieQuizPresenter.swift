@@ -11,9 +11,9 @@ final class MovieQuizPresenter: UIViewController, QuestionFactoryDelegate {
     private let questionAmount: Int = 10
     private var currentQuestionIndex = 0
     
-    init(viewController: MovieQuizViewController) {
+    init(viewController: MovieQuizViewControllerProtocol) {
         super.init(nibName: nil, bundle: nil)
-        self.viewController = viewController
+        self.viewController = viewController as? MovieQuizViewController
         statisticService = StatisticService()
         
         

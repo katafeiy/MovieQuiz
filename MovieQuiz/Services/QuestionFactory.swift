@@ -93,6 +93,7 @@ final class QuestionFactory: QuestionFactoryProtocol {
                     guard let self = self else { return }
                     
                     self.delegate?.errorFromDownloadImage(with: error)
+                    
                 }
                 return
             }
