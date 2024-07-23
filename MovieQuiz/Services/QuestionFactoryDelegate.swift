@@ -6,6 +6,5 @@ protocol QuestionFactoryDelegate: AnyObject {
     func didLoadDataFromServer()
     func didFailToLoadData(with error: Error)
     func errorFromDownloadImage(with error: Error)
-    
 }
 

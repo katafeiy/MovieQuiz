@@ -1,44 +1,38 @@
 import UIKit
 
-final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, AlertPresenterDelegate {
+final class MovieQuizViewController: UIViewController, AlertPresenterDelegate {
     
     // MARK: - Lifecycle
     
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet private weak var pressButtonYes: UIButton!
     @IBOutlet private weak var pressButtonNo: UIButton!
     @IBOutlet private weak var questionsTitleLabel: UILabel!
     @IBOutlet private weak var counterLabel: UILabel!
     @IBOutlet private weak var questionLabel: UILabel!
-    @IBOutlet private weak var previewImage: UIImageView!
     
-    private var questionFactory: QuestionFactoryProtocol?
-    private var statisticService: StatisticServiceProtocol?
-    private var presenter = MovieQuizPresenter()
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var previewImage: UIImageView!
+    
+    private var presenter: MovieQuizPresenter!
+    
     var alert: AlertPresenterProtocol?
     
     override func viewDidLoad() {
-        
         super.viewDidLoad()
         
-        presenter.viewController = self
+        presenter = .init(viewController: self)
         
-        let statisticService = StatisticService()
-        let questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         let alert = AlertPresenter()
         
         alert.setDelegate(self)
-        questionFactory.setDelegate(self)
         
-        self.statisticService = statisticService
-        self.questionFactory = questionFactory
         self.alert = alert
         
         setupFonts()
         setupUI()
         
         showLoadingIndicator()
-        questionFactory.loadData()
+        presenter.questionFactory?.loadData()
         
     }
     
@@ -82,7 +76,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     
     func completion() -> () {
         
-        guard let questionFactory else { return }
+        guard let questionFactory = presenter.questionFactory else { return }
         presenter.restartGame()
         questionFactory.requestNextQuestion()
         
@@ -91,13 +85,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         }
     }
     
-    // MARK: - QuestionFactoryDelegate
     
-    func didReceiveNextQuestion(question: QuizQuestion?) {
-        
-        presenter.didReceiveNextQuestion(question: question)
-        
-    }
 
     // MARK: - Actions
     
@@ -125,28 +113,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
         
     }
     
-    // функция индикации правильного и не правильного ответа
-    
-    func showAnswerResult(isCorrect: Bool) {
-        
-        blockingButtonPresses(isEnable: true)
-        
-        previewImage.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
-        
-        blockingButtonPresses(isEnable: false)
-        
-        presenter.didAnswer(isCorrectAnswer: isCorrect)
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-            guard let self = self else { return }
-           
-            self.presenter.questionFactory = self.questionFactory
-            self.presenter.showNextQuestionOrResults()
-            previewImage.layer.borderColor = UIColor.clear.cgColor
-        }
-        
-    }
-    
     // функция вывода алерта
     
     func presentAlert(viewController: UIViewController) {
@@ -157,14 +123,14 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     
     // функция отображения индикатора загрузки
     
-    private func showLoadingIndicator() {
+   func showLoadingIndicator() {
         
         activityIndicator.isHidden = false
         activityIndicator.startAnimating()
         
     }
     
-    private func hideLoadingIndicator() {
+    func hideLoadingIndicator() {
         
         activityIndicator.isHidden = true
         activityIndicator.stopAnimating()
@@ -173,7 +139,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     
     // функция блокировки кнопок
     
-    private func blockingButtonPresses(isEnable: Bool) {
+    func blockingButtonPresses(isEnable: Bool) {
         
         pressButtonYes.isEnabled = isEnable
         pressButtonNo.isEnabled = isEnable
@@ -192,7 +158,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
     
     // функция отображения ошибки при неудачной загрузки данных
     
-    private func showNetworkError(message: String) {
+    func showNetworkError(message: String) {
         
         hideLoadingIndicator()
         
@@ -202,49 +168,11 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate, 
             
             guard let self = self else { return }
             
-            presenter.restartGame()
-            questionFactory?.loadData()
+            presenter.questionFactory?.loadData()
             
         }
         
         alert?.show(quiz: errorMessage, isShowRestart: false)
-    }
-    
-    // функция сообщения об успешной загрузке данных
-    
-    func didLoadDataFromServer() {
-        
-        activityIndicator.isHidden = true
-        questionFactory?.requestNextQuestion()
-        
-    }
-    
-    // функция сообщения об ошибке загрузки данных
-    
-    func didFailToLoadData(with error: Error) {
-        
-        showNetworkError(message: error.localizedDescription)
-                
-    }
-    
-    // функция отображения ошибки при неудачной загрузки картинки
-    
-    func errorFromDownloadImage(with error: Error) {
-        
-        hideLoadingIndicator()
-        
-        let errorMessage = AlertModel(title: "Ошибка!\n",
-                                      message: error.localizedDescription,
-                                      buttonText: "Попробовать еще раз...") { [ weak self ] in
-            
-            guard let self = self else { return }
-            
-            self.questionFactory?.requestNextQuestion()
-            
-        }
-        
-        alert?.show(quiz: errorMessage, isShowRestart: false)
-        
     }
     
 }

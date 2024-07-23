@@ -16,13 +16,14 @@ final class QuestionFactory: QuestionFactoryProtocol {
     
     private var movies: [MostPopularMovie] = []
     
+    
     func loadData() {
         
         moviesLoader.loadMovies { [ weak self ] result in
+            guard let self = self else { return }
             
             DispatchQueue.main.async {
                 
-                guard let self = self else { return }
                 
                 switch result {
                     
@@ -81,7 +82,7 @@ final class QuestionFactory: QuestionFactoryProtocol {
         
         guard let url = movie.resizedImageURL else { return }
         
-        let request = URLRequest(url: url, timeoutInterval: 1)
+        let request = URLRequest(url: url, timeoutInterval: 10)
         
         let task = URLSession.shared.dataTask(with: request) { [weak self] data , response , error in
             
