@@ -12,10 +12,10 @@ final class MovieQuizPresenter: UIViewController, QuestionFactoryDelegate {
     private var currentQuestionIndex = 0
     
     init(viewController: MovieQuizViewControllerProtocol) {
+        
         super.init(nibName: nil, bundle: nil)
         self.viewController = viewController as? MovieQuizViewController
         statisticService = StatisticService()
-        
         
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         viewController.showLoadingIndicator()
@@ -118,7 +118,7 @@ final class MovieQuizPresenter: UIViewController, QuestionFactoryDelegate {
         let viewModel = convert(model: question)
         
         DispatchQueue.main.async { [weak self] in
-            self?.viewController?.show(quiz: viewModel) //1 // 2
+            self?.viewController?.show(quiz: viewModel)
         }
     }
     
@@ -179,5 +179,4 @@ final class MovieQuizPresenter: UIViewController, QuestionFactoryDelegate {
             
         }
     }
-    
 }
