@@ -77,7 +77,9 @@ final class MovieQuizPresenter: UIViewController, QuestionFactoryDelegate {
         questionFactory?.requestNextQuestion()
     }
     
-    func switchToNextQuestion() { currentQuestionIndex += 1 }
+    func switchToNextQuestion() {
+        currentQuestionIndex += 1
+    }
     
     func didAnswer(isCorrectAnswer: Bool) {
         if isCorrectAnswer == true {

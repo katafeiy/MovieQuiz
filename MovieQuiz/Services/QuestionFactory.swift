@@ -94,6 +94,7 @@ final class QuestionFactory: QuestionFactoryProtocol {
                     
                     self.delegate?.errorFromDownloadImage(with: error)
                     
+                    
                 }
                 return
             }
