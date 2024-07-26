@@ -1,8 +1,8 @@
 import Foundation
 
 final class QuestionFactory: QuestionFactoryProtocol {
-    var countElements: Int { return movies.count }
     
+    var countElements: Int { return movies.count }
     
     private var moviesLoader: MoviesLoading
     private weak var delegate: QuestionFactoryDelegate?

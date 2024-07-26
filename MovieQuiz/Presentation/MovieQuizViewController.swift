@@ -1,7 +1,7 @@
 import UIKit
 
 final class MovieQuizViewController: UIViewController, AlertPresenterDelegate, MovieQuizViewControllerProtocol {
-    
+   
     // MARK: - Lifecycle
     
     @IBOutlet private weak var pressButtonYes: UIButton!
@@ -13,14 +13,14 @@ final class MovieQuizViewController: UIViewController, AlertPresenterDelegate, M
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var previewImage: UIImageView!
     
-    private var presenter: MovieQuizPresenter!
+    private var presenter: MovieQuizPresenterProtocol?
     
     var alert: AlertPresenterProtocol?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        presenter = .init(viewController: self)
+//        presenter = .init(viewController: self)
         
         let alert = AlertPresenter()
         
@@ -32,7 +32,7 @@ final class MovieQuizViewController: UIViewController, AlertPresenterDelegate, M
         setupUI()
         
         showLoadingIndicator()
-        presenter.questionFactory?.loadData()
+        presenter?.loadGame()
         
     }
     
@@ -76,28 +76,33 @@ final class MovieQuizViewController: UIViewController, AlertPresenterDelegate, M
     
     func completion() -> () {
         
-        guard let questionFactory = presenter.questionFactory else { return }
-        presenter.restartGame()
-        questionFactory.requestNextQuestion()
-        
-        if questionFactory.countElements < 20 {
-            questionFactory.loadData()
-        }
+        presenter?.restartGame()
+    
     }
     
-    
-
     // MARK: - Actions
     
     @IBAction private func pressButtonYes(_ sender: UIButton) {
-    
-        presenter.pressButtonYes()
+        
+        presenter?.pressButtonYes()
         
     }
     
     @IBAction private func pressButtonNo(_ sender: UIButton) {
         
-        presenter.pressButtonNo()
+        presenter?.pressButtonNo()
+        
+    }
+    
+    func highlightImageBorder(isCorrectAnswer: Bool) {
+    
+        previewImage.layer.borderColor = isCorrectAnswer ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
+        
+    }
+    
+    func cleanHighlightImageBorder() {
+        
+        previewImage.layer.borderColor = UIColor.clear.cgColor
         
     }
     
@@ -168,7 +173,7 @@ final class MovieQuizViewController: UIViewController, AlertPresenterDelegate, M
             
             guard let self = self else { return }
             
-            presenter.questionFactory?.loadData()
+            presenter?.loadGame()
             
         }
         

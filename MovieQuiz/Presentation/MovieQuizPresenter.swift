@@ -1,16 +1,16 @@
 import UIKit
 
-final class MovieQuizPresenter: UIViewController, QuestionFactoryDelegate {
+final class MovieQuizPresenter: UIViewController, QuestionFactoryDelegate, MovieQuizPresenterProtocol {
     
     private var currentQuestion: QuizQuestion?
-    var questionFactory: QuestionFactoryProtocol?
+    private var questionFactory: QuestionFactoryProtocol?
     private var statisticService: StatisticServiceProtocol?
     private weak var viewController: MovieQuizViewController?
     
     private var correctAnswers = 0
     private let questionAmount: Int = 10
     private var currentQuestionIndex = 0
-    
+
     init(viewController: MovieQuizViewControllerProtocol) {
         
         super.init(nibName: nil, bundle: nil)
@@ -37,16 +37,16 @@ final class MovieQuizPresenter: UIViewController, QuestionFactoryDelegate {
     }
     
     func didRecieveNextQuestion(question: QuizQuestion?) {
-            guard let question = question else {
-                return
-            }
-            
-            currentQuestion = question
-            let viewModel = convert(model: question)
-            DispatchQueue.main.async { [weak self] in
-                self?.viewController?.show(quiz: viewModel)
-            }
+        guard let question = question else {
+            return
         }
+        
+        currentQuestion = question
+        let viewModel = convert(model: question)
+        DispatchQueue.main.async { [weak self] in
+            self?.viewController?.show(quiz: viewModel)
+        }
+    }
     
     // функция отображения ошибки при неудачной загрузки картинки
     
@@ -66,15 +66,23 @@ final class MovieQuizPresenter: UIViewController, QuestionFactoryDelegate {
         
         viewController?.alert?.show(quiz: errorMessage, isShowRestart: false)
     }
-
+    
     func isLastQuestion() -> Bool {
         currentQuestionIndex == questionAmount - 1
+    }
+    
+    func loadGame() {
+        questionFactory?.loadData()
     }
     
     func restartGame() {
         correctAnswers = 0
         currentQuestionIndex = 0
         questionFactory?.requestNextQuestion()
+        
+        if (questionFactory?.countElements ?? 0) < 20 {
+            loadGame()
+        }
     }
     
     func switchToNextQuestion() {
@@ -83,7 +91,7 @@ final class MovieQuizPresenter: UIViewController, QuestionFactoryDelegate {
     
     func didAnswer(isCorrectAnswer: Bool) {
         if isCorrectAnswer == true {
-             correctAnswers += 1
+            correctAnswers += 1
         }
     }
     
@@ -97,7 +105,7 @@ final class MovieQuizPresenter: UIViewController, QuestionFactoryDelegate {
         return questionStep
         
     }
-        
+    
     func pressButtonYes() { didAnswer(isYes: true) }
     
     func pressButtonNo() { didAnswer(isYes: false) }
@@ -128,20 +136,20 @@ final class MovieQuizPresenter: UIViewController, QuestionFactoryDelegate {
     
     func proceedWithAnswer(isCorrect: Bool) {
         
-        viewController?.blockingButtonPresses(isEnable: true)
-        
-        viewController?.previewImage.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
-        
-        viewController?.blockingButtonPresses(isEnable: false)
-        
         didAnswer(isCorrectAnswer: isCorrect)
         
+        viewController?.blockingButtonPresses(isEnable: true)
+        
+        viewController?.highlightImageBorder(isCorrectAnswer: isCorrect)
+        
+        viewController?.blockingButtonPresses(isEnable: false)
+    
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             guard let self = self else { return }
-           
             
+            viewController?.cleanHighlightImageBorder()
             proceedToNextQuestionOrResults()
-            viewController?.previewImage.layer.borderColor = UIColor.clear.cgColor
+            
         }
         
     }
