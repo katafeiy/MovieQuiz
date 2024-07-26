@@ -20,7 +20,7 @@ final class MovieQuizViewController: UIViewController, AlertPresenterDelegate, M
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        presenter = .init(viewController: self)
+        presenter = MovieQuizPresenter(viewController: self)
         
         let alert = AlertPresenter()
         
