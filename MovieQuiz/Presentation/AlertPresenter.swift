@@ -4,7 +4,11 @@ import UIKit
 
 final class AlertPresenter: AlertPresenterProtocol {
     
-    private var resetAllValue = MovieQuizViewController()
+    private var resetAllValue: MovieQuizViewController? = {
+        let storiboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storiboard.instantiateViewController(withIdentifier: "MovieQuizViewController") as? MovieQuizViewController
+        return vc
+    }()
     
     weak var delegate: AlertPresenterDelegate?
     
@@ -19,6 +23,8 @@ final class AlertPresenter: AlertPresenterProtocol {
         let alert = UIAlertController(title: result.title,
                                       message: result.message,
                                       preferredStyle: .alert)
+        
+        alert.view.accessibilityIdentifier = "quizAlert"
         
         let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in
             
@@ -41,7 +47,7 @@ final class AlertPresenter: AlertPresenterProtocol {
             
             let reset = UIAlertAction(title: "Сбросить сессию", style: .destructive) { _ in
                 
-                self.resetAllValue.reset()
+                self.resetAllValue?.reset()
                 
                 let statisticReset = AlertModel(title: "Сессия сброшена!" + "\n",
                                                 message: "Хотите начать заново?",
@@ -56,7 +62,5 @@ final class AlertPresenter: AlertPresenterProtocol {
         }
         
         delegate?.presentAlert(viewController: alert)
-        
     }
-    
 }

@@ -1,8 +1,8 @@
 import Foundation
 
 final class QuestionFactory: QuestionFactoryProtocol {
-    var countElements: Int { return movies.count }
     
+    var countElements: Int { return movies.count }
     
     private var moviesLoader: MoviesLoading
     private weak var delegate: QuestionFactoryDelegate?
@@ -16,13 +16,14 @@ final class QuestionFactory: QuestionFactoryProtocol {
     
     private var movies: [MostPopularMovie] = []
     
+    
     func loadData() {
         
         moviesLoader.loadMovies { [ weak self ] result in
+            guard let self = self else { return }
             
             DispatchQueue.main.async {
                 
-                guard let self = self else { return }
                 
                 switch result {
                     
@@ -59,20 +60,16 @@ final class QuestionFactory: QuestionFactoryProtocol {
         func resultData(image: Data) {
             
             let rating = Float(movie.rating ?? "") ?? 0
-            
             let element = Float.random(in: 4.5...9.9)
-            
             let randomRating = Float(String(format: "%.1f", element)) ?? 0
-            
             let text = "Рейтинг этого фильма больше чем \(randomRating)?"
-            
             let correctAnswer = rating > randomRating
             
             let question = QuizQuestion(image: image,
                                         text: text,
                                         correctAnswer: correctAnswer)
             
-            DispatchQueue.main.async { [ weak self ] in
+            DispatchQueue.main.async { [weak self] in
                 
                 guard let self = self else { return }
                 
@@ -85,15 +82,19 @@ final class QuestionFactory: QuestionFactoryProtocol {
         
         guard let url = movie.resizedImageURL else { return }
         
-        let request = URLRequest(url: url, timeoutInterval: 1)
+        let request = URLRequest(url: url, timeoutInterval: 3)
         
-        let task = URLSession.shared.dataTask(with: request) { data , response , error in
+        let task = URLSession.shared.dataTask(with: request) { [weak self] data , response , error in
             
             if let error = error {
                 
                 DispatchQueue.main.async {
                     
+                    guard let self = self else { return }
+                    
                     self.delegate?.errorFromDownloadImage(with: error)
+                    
+                    
                 }
                 return
             }
